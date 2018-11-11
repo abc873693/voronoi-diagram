@@ -6,15 +6,6 @@ import java.io.File
 
 object Utils {
 
-    fun splitData(text: String): ArrayList<Double> {
-        val textNumbers = text.split(' ')
-        val numbers: ArrayList<Double> = ArrayList()
-        textNumbers.forEach {
-            numbers.add(it.toDouble())
-        }
-        return numbers
-    }
-
     fun parseData(file: File): ArrayList<TestData> {
         val results: ArrayList<TestData> = ArrayList()
         var size = 0
