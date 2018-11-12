@@ -7,7 +7,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import javafx.scene.shape.Rectangle
 import tornadofx.View
 import javafx.scene.text.FontWeight
 import javafx.stage.FileChooser
@@ -15,6 +14,7 @@ import tornadofx.*
 import voronoiDiagram.libs.Utils
 import voronoiDiagram.models.Point
 import voronoiDiagram.models.TestData
+import voronoiDiagram.models.VoronoiDiagram3Point
 import java.io.File
 
 
@@ -126,12 +126,6 @@ class HomePage : View() {
                         width = 600.0
                         height = 600.0
                     }
-                    line {
-                        startX = 600.0
-                        startY = 100.0
-                        endX = 200.0
-                        endY = 300.0
-                    }
                 }
                 val canvas = canvas {
                     height = 600.0
@@ -152,7 +146,9 @@ class HomePage : View() {
             val panelX = evt.sceneX - BASE_X
             val panelY = evt.sceneY - BASE_Y
             points.add(Point(panelX, panelY))
-            groups.add(Circle(panelX, panelY, 0.5))
+            val circle = Circle(panelX, panelY, 0.5)
+            circle.fill = Color.RED
+            groups.add(circle)
             updateInputData()
         }
     }
@@ -166,7 +162,11 @@ class HomePage : View() {
     }
 
     private fun execute() {
-
+        val vd = VoronoiDiagram3Point(points)
+        vd.execute()
+        vd.lines.forEach {
+            groups.add(it.getFxLine)
+        }
     }
 
     private fun clean() {
@@ -186,12 +186,6 @@ class HomePage : View() {
                     fill = Color.WHITE
                     width = 600.0
                     height = 600.0
-                }
-                line {
-                    startX = 600.0
-                    startY = 100.0
-                    endX = 200.0
-                    endY = 300.0
                 }
             }
             val canvas = canvas {
