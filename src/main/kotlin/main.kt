@@ -45,6 +45,7 @@ class HomePage : View() {
     lateinit var groups: Group
     private lateinit var stackpane: StackPane
     private var testDataList: ArrayList<TestData> = ArrayList()
+    private var currentTestDataIndex = 0
     private var points: ArrayList<Point> = ArrayList()
 
     init {
@@ -70,15 +71,36 @@ class HomePage : View() {
                                 runAsync {
 
                                 } ui {
-                                    label.text = this.absolutePath
+                                    clean()
                                     testDataList = Utils.parseData(this)
-                                    testDataList.forEach { testData ->
-
+                                    currentTestDataIndex = 0
+                                    testDataList[currentTestDataIndex].points.forEach { point ->
+                                        val circle = Circle(point.x, point.y, 0.5)
+                                        circle.fill = Color.RED
+                                        groups.add(circle)
                                     }
-                                    points = testDataList.first().points
                                     updateInputData()
                                 }
                             }
+                    }
+                }
+                button("下一筆") {
+                    action {
+                        if (testDataList.size == 0)
+                            label.text = "尚未選取檔案"
+                        else {
+                            clean()
+                            currentTestDataIndex++
+                            if (currentTestDataIndex < testDataList.size) {
+                                testDataList[currentTestDataIndex].points.forEach { point ->
+                                    val circle = Circle(point.x, point.y, 0.5)
+                                    circle.fill = Color.RED
+                                    groups.add(circle)
+                                }
+                                updateInputData()
+                            } else
+                                label.text = "讀檔模式已讀到結尾"
+                        }
                     }
                 }
                 button("輸出檔案") {
@@ -155,6 +177,12 @@ class HomePage : View() {
 
 
     private fun updateInputData() {
+        if (testDataList.size != 0) {
+            label.text = "讀檔模式 目前第 ${currentTestDataIndex + 1} 筆"
+            points = testDataList[currentTestDataIndex].points
+        }else{
+            label.text = "手動模式"
+        }
         inputData.text = "InputData = "
         points.forEach { point ->
             inputData.text += "${point.toString()} "
