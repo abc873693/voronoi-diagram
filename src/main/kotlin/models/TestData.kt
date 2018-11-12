@@ -1,4 +1,4 @@
-package javafx.test.models
+package voronoiDiagram.models
 
 class TestData(val size: Int) {
     val points: ArrayList<Point> = ArrayList()

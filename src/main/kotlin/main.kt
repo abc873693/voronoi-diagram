@@ -1,17 +1,20 @@
-package javafx.test
+package voronoiDiagram
 
 import javafx.application.Application.launch
 import javafx.scene.Group
 import javafx.scene.control.Label
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import tornadofx.View
 import javafx.scene.text.FontWeight
 import javafx.stage.FileChooser
-import javafx.test.libs.Utils
-import javafx.test.models.TestData
 import tornadofx.*
+import voronoiDiagram.libs.Utils
+import voronoiDiagram.models.Point
+import voronoiDiagram.models.TestData
 import java.io.File
 
 
@@ -31,15 +34,29 @@ class Styles : Stylesheet() {
     }
 }
 
+private const val BASE_X = 10.0
+private const val BASE_Y = 180.0
+
 class HomePage : View() {
 
-    val BASE_X = 10
-    val BASE_Y = 100
-
-    lateinit var label: Label
-    private lateinit var groups: Group
+    private lateinit var label: Label
+    lateinit var inputData: Label
+    lateinit var outputData: Label
+    lateinit var groups: Group
     private lateinit var stackpane: StackPane
     private var testDataList: ArrayList<TestData> = ArrayList()
+    private var points: ArrayList<Point> = ArrayList()
+
+    init {
+    }
+
+    private fun setLabelCss(inlineCss: InlineCss) {
+        inlineCss.apply {
+            backgroundColor = MultiValue()
+            backgroundColor += c("#cecece", 0.0)
+            fontSize = Dimension(16.0, Dimension.LinearUnits.px)
+        }
+    }
 
     override val root = form {
         vbox(20) {
@@ -56,8 +73,10 @@ class HomePage : View() {
                                     label.text = this.absolutePath
                                     testDataList = Utils.parseData(this)
                                     testDataList.forEach { testData ->
-                                        print(testData.toString())
+
                                     }
+                                    points = testDataList.first().points
+                                    updateInputData()
                                 }
                             }
                     }
@@ -87,8 +106,17 @@ class HomePage : View() {
             }
             label = label {
                 style {
-                    backgroundColor = MultiValue()
-                    backgroundColor += c("#cecece", 0.0)
+                    setLabelCss(this)
+                }
+            }
+            inputData = label("InputData = ") {
+                style {
+                    setLabelCss(this)
+                }
+            }
+            outputData = label("OutputData = ") {
+                style {
+                    setLabelCss(this)
                 }
             }
             stackpane = stackpane {
@@ -110,37 +138,51 @@ class HomePage : View() {
                     width = 600.0
                 }
                 canvas.setOnMouseClicked { evt ->
-                    print("${evt.sceneX} ${evt.sceneY}\n")
-                    runAsync {
-
-                    } ui { loadedText ->
-                        groups.add(circle {
-                            centerX = evt.sceneX - BASE_X
-                            centerY = evt.sceneY - BASE_Y
-                            radius = 0.5
-                        })
-                    }
+                    addPoint(evt)
                 }
             }
         }
     }
 
-    private fun execute() {
+    private fun addPoint(evt: MouseEvent) {
+        print("${evt.sceneX} ${evt.sceneY}\n")
+        runAsync {
 
+        } ui {
+            val panelX = evt.sceneX - BASE_X
+            val panelY = evt.sceneY - BASE_Y
+            points.add(Point(panelX, panelY))
+            groups.add(Circle(panelX, panelY, 0.5))
+            updateInputData()
+        }
+    }
+
+
+    private fun updateInputData() {
+        inputData.text = "InputData = "
+        points.forEach { point ->
+            inputData.text += "${point.toString()} "
+        }
+    }
+
+    private fun execute() {
 
     }
 
     private fun clean() {
         this@HomePage.stackpane.clear()
         this@HomePage.stackpane = generatePanel()
+        points.clear()
+        inputData.text = "InputData = "
+        outputData.text = "OutputData = "
     }
-
-    private lateinit var backgroundRectangle: Rectangle
 
     private fun generatePanel(): StackPane {
         return stackpane {
+            layoutX = BASE_X
+            layoutX = BASE_Y
             groups = group {
-                backgroundRectangle = rectangle {
+                rectangle {
                     fill = Color.WHITE
                     width = 600.0
                     height = 600.0
@@ -157,18 +199,7 @@ class HomePage : View() {
                 width = 600.0
             }
             canvas.setOnMouseClicked { evt ->
-                print("${evt.sceneX} ${evt.sceneY}\n")
-                runAsync {
-
-                } ui { loadedText ->
-                    print("stackpane layout ${stackpane.layoutX} ${stackpane.layoutY}\n")
-                    print("stackpane scale ${stackpane.scaleX} ${stackpane.scaleY}\n")
-                    groups.add(circle {
-                        centerX = evt.sceneX - backgroundRectangle.layoutX
-                        centerY = evt.sceneY - backgroundRectangle.layoutY
-                        radius = 0.5
-                    })
-                }
+                addPoint(evt)
             }
         }
     }

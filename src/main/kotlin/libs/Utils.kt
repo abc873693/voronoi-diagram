@@ -1,7 +1,7 @@
-package javafx.test.libs
+package voronoiDiagram.libs
 
-import javafx.test.models.Point
-import javafx.test.models.TestData
+import voronoiDiagram.models.Point
+import voronoiDiagram.models.TestData
 import java.io.File
 
 object Utils {
