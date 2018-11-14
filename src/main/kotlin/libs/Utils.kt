@@ -42,20 +42,29 @@ object Utils {
         var endX = 600.0
         var startY = (-(1 / slope)) * (startX - midPoint.x) + midPoint.y
         var endY = (-(1 / slope)) * (endX - midPoint.x) + midPoint.y
-        //print("${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
+        print("before : ${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
+        print("${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
         if (startY < 0.0 || startY > 600.0) {
             startY = 600.0
             startX = (startY - midPoint.y) / (-(1 / slope)) + midPoint.x
+            if (startX < 0.0 || startX > 600.0) {
+                startY = 0.0
+                startX = (startY - midPoint.y) / (-(1 / slope)) + midPoint.x
+            }
         }
         if (endY < 0.0 || endY > 600.0) {
             endY = 0.0
             endX = (endY - midPoint.y) / (-(1 / slope)) + midPoint.x
+            if (endX < 0.0 || endX > 600.0) {
+                endY = 600.0
+                endX = (endY - midPoint.y) / (-(1 / slope)) + midPoint.x
+            }
         }
         if (startX > endX || (startX == endX && startY > endY)) {
             startX = endX.also { endX = startX }
             startY = endY.also { endY = startY }
         }
-        print("${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
+        print("after : ${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
         return Line(startX, startY, endX, endY)
     }
 

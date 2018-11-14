@@ -36,6 +36,7 @@ class Styles : Stylesheet() {
 
 private const val BASE_X = 10.0
 private const val BASE_Y = 180.0
+public const val MAX = 600.0
 
 class HomePage : View() {
 
@@ -75,9 +76,7 @@ class HomePage : View() {
                                     testDataList = Utils.parseData(this)
                                     currentTestDataIndex = 0
                                     testDataList[currentTestDataIndex].points.forEach { point ->
-                                        val circle = Circle(point.x, point.y, 3.0)
-                                        circle.fill = Color.RED
-                                        groups.add(circle)
+                                        groups.add(point.getCircle())
                                     }
                                     updateInputData()
                                 }
@@ -93,9 +92,7 @@ class HomePage : View() {
                             currentTestDataIndex++
                             if (currentTestDataIndex < testDataList.size) {
                                 testDataList[currentTestDataIndex].points.forEach { point ->
-                                    val circle = Circle(point.x, point.y, 3.0)
-                                    circle.fill = Color.RED
-                                    groups.add(circle)
+                                    groups.add(point.getCircle())
                                 }
                                 updateInputData()
                             } else
@@ -122,6 +119,7 @@ class HomePage : View() {
                 }
                 button("清空畫布") {
                     action {
+                        testDataList.clear()
                         clean()
                     }
                 }
@@ -167,10 +165,8 @@ class HomePage : View() {
         } ui {
             val panelX = evt.sceneX - BASE_X
             val panelY = evt.sceneY - BASE_Y
-            points.add(Point(panelX, panelY))
-            val circle = Circle(panelX, panelY, 3.0)
-            circle.fill = Color.RED
-            groups.add(circle)
+            points.add(Point(panelX, MAX - panelY))
+            groups.add(points.last().getCircle())
             updateInputData()
         }
     }
@@ -180,7 +176,7 @@ class HomePage : View() {
         if (testDataList.size != 0) {
             label.text = "讀檔模式 目前第 ${currentTestDataIndex + 1} 筆"
             points = testDataList[currentTestDataIndex].points
-        }else{
+        } else {
             label.text = "手動模式"
         }
         inputData.text = "InputData = "
@@ -201,7 +197,6 @@ class HomePage : View() {
         this@HomePage.stackpane.clear()
         this@HomePage.stackpane = generatePanel()
         points.clear()
-        testDataList.clear()
         inputData.text = "InputData = "
         outputData.text = "OutputData = "
     }
