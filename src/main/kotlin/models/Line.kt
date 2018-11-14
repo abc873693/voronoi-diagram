@@ -11,6 +11,9 @@ class Line(var startX: Double, var startY: Double, var endX: Double, var endY: D
     val getFxLine
         get() = Line(startX, MAX - startY, endX, MAX - endY)
 
+    val out
+        get() = "E ${startX.toInt()} ${startY.toInt()} ${endX.toInt()} ${endY.toInt()}"
+
     override fun toString(): String {
         return "L ($startX, $startY) ($endX, $endY)"
     }

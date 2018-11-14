@@ -15,6 +15,9 @@ class Point(var x: Double, var y: Double) {
         return circle
     }
 
+    val out
+        get() = "P ${x.toInt()} ${y.toInt()}"
+
     override fun toString(): String {
         return "($x , $y)"
     }

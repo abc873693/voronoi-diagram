@@ -6,12 +6,12 @@ import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
 import tornadofx.View
 import javafx.scene.text.FontWeight
 import javafx.stage.FileChooser
 import tornadofx.*
 import voronoiDiagram.libs.Utils
+import voronoiDiagram.models.Line
 import voronoiDiagram.models.Point
 import voronoiDiagram.models.TestData
 import voronoiDiagram.models.VoronoiDiagram3Point
@@ -48,6 +48,7 @@ class HomePage : View() {
     private var testDataList: ArrayList<TestData> = ArrayList()
     private var currentTestDataIndex = 0
     private var points: ArrayList<Point> = ArrayList()
+    private var lines: ArrayList<Line> = ArrayList()
 
     init {
     }
@@ -73,7 +74,7 @@ class HomePage : View() {
 
                                 } ui {
                                     clean()
-                                    testDataList = Utils.parseData(this)
+                                    testDataList = Utils.parseInputData(this)
                                     currentTestDataIndex = 0
                                     testDataList[currentTestDataIndex].points.forEach { point ->
                                         groups.add(point.getCircle())
@@ -107,8 +108,12 @@ class HomePage : View() {
                         print(pathName)
                         val file = File(pathName)
                         file.printWriter().use { out ->
-                            out.println("First line")
-                            out.println("Second line")
+                            points.forEach {
+                                out.println(it.out)
+                            }
+                            lines.forEach {
+                                out.println(it.out)
+                            }
                         }
                     }
                 }
@@ -121,6 +126,30 @@ class HomePage : View() {
                     action {
                         testDataList.clear()
                         clean()
+                    }
+                }
+                button("讀取輸出檔") {
+                    action {
+                        val filters = arrayOf(FileChooser.ExtensionFilter("文字文件", "*.txt"))
+                        val files: List<File> = chooseFile("選取輸出檔", filters, FileChooserMode.Single)
+                        if (files.isNotEmpty())
+                            files.first().apply {
+                                runAsync {
+
+                                } ui {
+                                    clean()
+                                    val data = Utils.parseOutputData(this)
+                                    points = data.points
+                                    lines = data.lines
+                                    lines.forEach { line ->
+                                        groups.add(line.getFxLine)
+                                    }
+                                    points.forEach { point ->
+                                        groups.add(point.getCircle())
+                                    }
+                                    updateInputData()
+                                }
+                            }
                     }
                 }
             }
@@ -191,6 +220,7 @@ class HomePage : View() {
         vd.lines.forEach {
             groups.add(it.getFxLine)
         }
+        lines = vd.lines
     }
 
     private fun clean() {

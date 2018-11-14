@@ -1,13 +1,14 @@
 package voronoiDiagram.libs
 
 import voronoiDiagram.models.Line
+import voronoiDiagram.models.OutputData
 import voronoiDiagram.models.Point
 import voronoiDiagram.models.TestData
 import java.io.File
 
 object Utils {
 
-    fun parseData(file: File): ArrayList<TestData> {
+    fun parseInputData(file: File): ArrayList<TestData> {
         val results: ArrayList<TestData> = ArrayList()
         var size = 0
         var stop = false
@@ -21,6 +22,31 @@ object Utils {
                     size--
                     val textNumbers = text.split(' ')
                     results.last().points.add(Point(textNumbers[0].toDouble(), textNumbers[1].toDouble()))
+                }
+            }
+        }
+        return results
+    }
+
+    fun parseOutputData(file: File): OutputData {
+        val results = OutputData()
+        file.forEachLine { text ->
+            if (text.isNotEmpty()) {
+                val textNumbers = text.split(' ')
+                println(textNumbers)
+                if (textNumbers.size > 1) {
+                    if (textNumbers.first() == "P") {
+                        results.points.add(Point(textNumbers[1].toDouble(), textNumbers[2].toDouble()))
+                    } else if (textNumbers.first() == "E") {
+                        results.lines.add(
+                            Line(
+                                textNumbers[1].toDouble(),
+                                textNumbers[2].toDouble(),
+                                textNumbers[3].toDouble(),
+                                textNumbers[4].toDouble()
+                            )
+                        )
+                    }
                 }
             }
         }
