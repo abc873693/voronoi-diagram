@@ -45,7 +45,7 @@ class VoronoiDiagram3Point(private var points: ArrayList<Point>) {
             println("lines1 ${lines[1].toString()}")
             println("lines2 ${lines[2].toString()}")
             if (intersection01.x in 0.0..600.0 && intersection01.y in 0.0..600.0) {
-                if (points[2].y in points[0].y..points[1].y || points[0].y >points[1].y) {
+                /*if (points[2].y in points[0].y..points[1].y || points[0].y >points[1].y) {
                     lines[0].endX = intersection01.x
                     lines[0].endY = intersection01.y
                 } else {
@@ -65,6 +65,83 @@ class VoronoiDiagram3Point(private var points: ArrayList<Point>) {
                 } else {
                     lines[2].startX = intersection02.x
                     lines[2].startY = intersection02.y
+                }*/
+                if (lines[0].startX == 0.0) {
+                    if (points[2].x > middlePoint01.x) {
+                        lines[0].endX = intersection01.x
+                        lines[0].endY = intersection01.y
+                    } else {
+                        lines[0].startX = intersection01.x
+                        lines[0].startY = intersection01.y
+                    }
+                } else if (lines[0].startY == 0.0) {
+                    if (points[2].y > middlePoint01.y) {
+                        lines[0].endX = intersection01.x
+                        lines[0].endY = intersection01.y
+                    } else {
+                        lines[0].startX = intersection01.x
+                        lines[0].startY = intersection01.y
+                    }
+                } else if (lines[0].startY == 600.0) {
+                    if (points[2].y > middlePoint01.y) {
+                        lines[0].startX = intersection01.x
+                        lines[0].startY = intersection01.y
+                    } else {
+                        lines[0].endX = intersection01.x
+                        lines[0].endY = intersection01.y
+                    }
+                }
+
+                if (lines[1].startX == 0.0) {
+                    if (points[0].x > middlePoint12.x) {
+                        lines[1].endX = intersection12.x
+                        lines[1].endY = intersection12.y
+                    } else {
+                        lines[1].startX = intersection12.x
+                        lines[1].startY = intersection12.y
+                    }
+                } else if (lines[1].startY == 0.0) {
+                    if (points[0].x < middlePoint12.x) {
+                        lines[1].startX = intersection12.x
+                        lines[1].startY = intersection12.y
+                    } else {
+                        lines[1].endX = intersection12.x
+                        lines[1].endY = intersection12.y
+                    }
+                } else if (lines[1].startY == 600.0) {
+                    if (points[0].x > middlePoint12.x) {
+                        lines[1].endX = intersection12.x
+                        lines[1].endY = intersection12.y
+                    } else {
+                        lines[1].startX = intersection12.x
+                        lines[1].startY = intersection12.y
+                    }
+                }
+
+                if (lines[2].startX == 0.0) {
+                    if (points[1].y > middlePoint02.y) {
+                        lines[2].endX = intersection02.x
+                        lines[2].endY = intersection02.y
+                    } else {
+                        lines[2].startX = intersection02.x
+                        lines[2].startY = intersection02.y
+                    }
+                } else if (lines[2].startY == 0.0) {
+                    if (points[1].y < middlePoint02.y) {
+                        lines[2].startX = intersection02.x
+                        lines[2].startY = intersection02.y
+                    } else {
+                        lines[2].endX = intersection02.x
+                        lines[2].endY = intersection02.y
+                    }
+                } else if (lines[2].startY == 600.0) {
+                    if (points[1].y < middlePoint02.y) {
+                        lines[2].endX = intersection02.x
+                        lines[2].endY = intersection02.y
+                    } else {
+                        lines[2].startX = intersection02.x
+                        lines[2].startY = intersection02.y
+                    }
                 }
             } else {
                 lines.removeAt(2)
