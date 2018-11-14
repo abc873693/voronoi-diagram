@@ -32,28 +32,34 @@ class VoronoiDiagram3Point(private var points: ArrayList<Point>) {
             val slopeMiddlePoint0 = Utils.getSlope(points[0], middlePoint12)
             val slopeMiddlePoint1 = Utils.getSlope(points[1], middlePoint02)
             val slopeMiddlePoint2 = Utils.getSlope(points[2], middlePoint01)
-            println("points[0] ${points[0].toString()}")
-            println("points[1] ${points[1].toString()}")
-            println("points[2] ${points[2].toString()}")
+            val angle012 = Utils.getAngle(points[0], points[1], points[2])
+            val angle021 = Utils.getAngle(points[0], points[1], points[2])
+            val angle102 = Utils.getAngle(points[1], points[0], points[2])
+            println("angle012 $angle012")
+            println("angle021 $angle021")
+            println("angle102 $angle102")
             println("middlePoint01 ${middlePoint01.toString()}")
             println("middlePoint12 ${middlePoint12.toString()}")
             println("middlePoint02 ${middlePoint02.toString()}")
+            println("lines0 ${lines[0].toString()}")
+            println("lines1 ${lines[1].toString()}")
+            println("lines2 ${lines[2].toString()}")
             if (intersection01.x in 0.0..600.0 && intersection01.y in 0.0..600.0) {
-                if (slope01 > slopeMiddlePoint2) {
+                if (points[2].y in points[0].y..points[1].y || points[0].y >points[1].y) {
                     lines[0].endX = intersection01.x
                     lines[0].endY = intersection01.y
                 } else {
                     lines[0].startX = intersection01.x
                     lines[0].startY = intersection01.y
                 }
-                if (slope12 > slopeMiddlePoint0) {
+                if (points[0].y in points[1].y..points[2].y || points[1].y>points[2].y) {
                     lines[1].endX = intersection12.x
                     lines[1].endY = intersection12.y
                 } else {
                     lines[1].startX = intersection12.x
                     lines[1].startY = intersection12.y
                 }
-                if (slope02 > slopeMiddlePoint1) {
+                if (points[1].y in points[0].y..points[2].y || points[0].y < points[2].y) {
                     lines[2].endX = intersection02.x
                     lines[2].endY = intersection02.y
                 } else {

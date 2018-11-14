@@ -75,7 +75,7 @@ class HomePage : View() {
                                     testDataList = Utils.parseData(this)
                                     currentTestDataIndex = 0
                                     testDataList[currentTestDataIndex].points.forEach { point ->
-                                        val circle = Circle(point.x, point.y, 0.5)
+                                        val circle = Circle(point.x, point.y, 3.0)
                                         circle.fill = Color.RED
                                         groups.add(circle)
                                     }
@@ -93,7 +93,7 @@ class HomePage : View() {
                             currentTestDataIndex++
                             if (currentTestDataIndex < testDataList.size) {
                                 testDataList[currentTestDataIndex].points.forEach { point ->
-                                    val circle = Circle(point.x, point.y, 0.5)
+                                    val circle = Circle(point.x, point.y, 3.0)
                                     circle.fill = Color.RED
                                     groups.add(circle)
                                 }
@@ -168,7 +168,7 @@ class HomePage : View() {
             val panelX = evt.sceneX - BASE_X
             val panelY = evt.sceneY - BASE_Y
             points.add(Point(panelX, panelY))
-            val circle = Circle(panelX, panelY, 0.5)
+            val circle = Circle(panelX, panelY, 3.0)
             circle.fill = Color.RED
             groups.add(circle)
             updateInputData()
@@ -201,6 +201,7 @@ class HomePage : View() {
         this@HomePage.stackpane.clear()
         this@HomePage.stackpane = generatePanel()
         points.clear()
+        testDataList.clear()
         inputData.text = "InputData = "
         outputData.text = "OutputData = "
     }

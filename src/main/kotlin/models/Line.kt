@@ -9,4 +9,8 @@ class Line(var startX: Double, var startY: Double, var endX: Double, var endY: D
 
     val getFxLine
         get() = Line(startX, startY, endX, endY)
+
+    override fun toString(): String {
+        return "L ($startX, $startY) ($endX, $endY)"
+    }
 }

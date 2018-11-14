@@ -51,7 +51,11 @@ object Utils {
             endY = 0.0
             endX = (endY - midPoint.y) / (-(1 / slope)) + midPoint.x
         }
-        //print("${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
+        if (startX > endX || (startX == endX && startY > endY)) {
+            startX = endX.also { endX = startX }
+            startY = endY.also { endY = startY }
+        }
+        print("${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
         return Line(startX, startY, endX, endY)
     }
 
@@ -76,5 +80,12 @@ object Utils {
                 }
             }
         }
+    }
+
+    fun getAngle(a: Point, b: Point, c: Point): Double {
+        val u = Point(a.x - b.x, a.y - b.y)
+        val v = Point(c.x - b.x, c.y - b.y)
+        val cosX = (u.x * v.x + u.y * v.y) / (u.length * v.length)
+        return Math.toDegrees(Math.acos(cosX))
     }
 }
