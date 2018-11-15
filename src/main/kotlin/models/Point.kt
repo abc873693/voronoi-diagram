@@ -19,6 +19,6 @@ class Point(var x: Double, var y: Double) {
         get() = "P ${x.toInt()} ${y.toInt()}"
 
     override fun toString(): String {
-        return "($x , $y)"
+        return "(${x.toInt()} , ${y.toInt()})"
     }
 }

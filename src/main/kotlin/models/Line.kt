@@ -15,6 +15,6 @@ class Line(var startX: Double, var startY: Double, var endX: Double, var endY: D
         get() = "E ${startX.toInt()} ${startY.toInt()} ${endX.toInt()} ${endY.toInt()}"
 
     override fun toString(): String {
-        return "L ($startX, $startY) ($endX, $endY)"
+        return "{(${startX.toInt()}, ${startY.toInt()})(${endX.toInt()}, ${endY.toInt()})} "
     }
 }

@@ -141,8 +141,10 @@ class HomePage : View() {
                                     val data = Utils.parseOutputData(this)
                                     points = data.points
                                     lines = data.lines
+                                    outputData.text = "OutputData = "
                                     lines.forEach { line ->
                                         groups.add(line.getFxLine)
+                                        outputData.text += line.toString()
                                     }
                                     points.forEach { point ->
                                         groups.add(point.getCircle())
@@ -215,12 +217,19 @@ class HomePage : View() {
     }
 
     private fun execute() {
+        Utils.sortPoints(points)
         val vd = VoronoiDiagram3Point(points)
         vd.execute()
+        outputData.text = "OutputData = "
         vd.lines.forEach {
             groups.add(it.getFxLine)
+            outputData.text += it.toString()
         }
         lines = vd.lines
+        inputData.text = "InputData = "
+        points.forEach { point ->
+            inputData.text += "${point.toString()} "
+        }
     }
 
     private fun clean() {
