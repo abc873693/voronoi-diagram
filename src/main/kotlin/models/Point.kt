@@ -2,7 +2,6 @@ package voronoiDiagram.models
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import voronoiDiagram.MAX
 
 class Point(var x: Double, var y: Double) {
 
@@ -10,7 +9,7 @@ class Point(var x: Double, var y: Double) {
         get() = Math.sqrt(x * x + y * y)
 
     fun getCircle(): Circle {
-        val circle = Circle(x, MAX - y, 3.0)
+        val circle = Circle(x, y, 3.0)
         circle.fill = Color.RED
         return circle
     }

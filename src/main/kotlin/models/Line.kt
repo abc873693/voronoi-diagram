@@ -1,7 +1,6 @@
 package voronoiDiagram.models
 
 import javafx.scene.shape.Line
-import voronoiDiagram.MAX
 
 class Line(var startX: Double, var startY: Double, var endX: Double, var endY: Double) {
 
@@ -9,7 +8,7 @@ class Line(var startX: Double, var startY: Double, var endX: Double, var endY: D
     val end = Point(endX, endY)
 
     val getFxLine
-        get() = Line(startX, MAX - startY, endX, MAX - endY)
+        get() = Line(startX, startY, endX, endY)
 
     val out
         get() = "E ${startX.toInt()} ${startY.toInt()} ${endX.toInt()} ${endY.toInt()}"

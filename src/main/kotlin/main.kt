@@ -4,6 +4,7 @@ import javafx.application.Application.launch
 import javafx.scene.Group
 import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import tornadofx.View
@@ -34,9 +35,8 @@ class Styles : Stylesheet() {
     }
 }
 
-private const val BASE_X = 10.0
-private const val BASE_Y = 180.0
-public const val MAX = 600.0
+private const val INPUT_DATA = "InputData"
+private const val OUTPUT_DATA = "OutputData"
 
 class HomePage : View() {
 
@@ -44,7 +44,6 @@ class HomePage : View() {
     lateinit var inputData: Label
     lateinit var outputData: Label
     lateinit var groups: Group
-    private lateinit var stackpane: StackPane
     private var testDataList: ArrayList<TestData> = ArrayList()
     private var currentTestDataIndex = 0
     private var points: ArrayList<Point> = ArrayList()
@@ -61,132 +60,138 @@ class HomePage : View() {
         }
     }
 
-    override val root = form {
-        vbox(20) {
-            hbox(20) {
-                button("開啟檔案") {
-                    action {
-                        val filters = arrayOf(FileChooser.ExtensionFilter("文字文件", "*.txt"))
-                        val files: List<File> = chooseFile("選取輸入檔", filters, FileChooserMode.Single)
-                        if (files.isNotEmpty())
-                            files.first().apply {
-                                runAsync {
+    override var root = generateForm()
 
-                                } ui {
-                                    clean()
-                                    testDataList = Utils.parseInputData(this)
-                                    currentTestDataIndex = 0
+    private fun generateForm(): HBox {
+        return hbox(20) {
+                stackpane {
+                    groups = group {
+                        rectangle {
+                            fill = Color.WHITE
+                            width = 600.0
+                            height = 600.0
+                        }
+                    }
+                    val canvas = canvas {
+                        height = 600.0
+                        width = 600.0
+                    }
+                    canvas.setOnMouseClicked { evt ->
+                        addPoint(evt)
+                    }
+                }
+                vbox(20) {
+                    minWidth = 100.0
+                    button("開啟檔案") {
+                        action {
+                            val filters = arrayOf(FileChooser.ExtensionFilter("文字文件", "*.txt"))
+                            val files: List<File> = chooseFile("選取輸入檔", filters, FileChooserMode.Single)
+                            if (files.isNotEmpty())
+                                files.first().apply {
+                                    runAsync {
+
+                                    } ui {
+                                        clean()
+                                        testDataList = Utils.parseInputData(this)
+                                        currentTestDataIndex = 0
+                                        testDataList[currentTestDataIndex].points.forEach { point ->
+                                            groups.add(point.getCircle())
+                                        }
+                                        updateInputData()
+                                    }
+                                }
+                        }
+                    }
+                    button("下一筆") {
+                        action {
+                            if (testDataList.size == 0)
+                                label.text = "尚未選取檔案"
+                            else {
+                                clean()
+                                currentTestDataIndex++
+                                if (currentTestDataIndex < testDataList.size) {
                                     testDataList[currentTestDataIndex].points.forEach { point ->
                                         groups.add(point.getCircle())
                                     }
                                     updateInputData()
+                                } else
+                                    label.text = "讀檔模式已讀到結尾"
+                            }
+                        }
+                    }
+                    button("輸出檔案") {
+                        action {
+                            val path = chooseDirectory("選取輸出路徑")
+                            val pathName = "${path?.absolutePath}\\out.txt"
+                            print(pathName)
+                            val file = File(pathName)
+                            file.printWriter().use { out ->
+                                points.forEach {
+                                    out.println(it.out)
+                                }
+                                lines.forEach {
+                                    out.println(it.out)
                                 }
                             }
+                        }
                     }
-                }
-                button("下一筆") {
-                    action {
-                        if (testDataList.size == 0)
-                            label.text = "尚未選取檔案"
-                        else {
+                    button("執行") {
+                        action {
+                            execute()
+                        }
+                    }
+                    button("清空畫布") {
+                        action {
+                            testDataList.clear()
                             clean()
-                            currentTestDataIndex++
-                            if (currentTestDataIndex < testDataList.size) {
-                                testDataList[currentTestDataIndex].points.forEach { point ->
-                                    groups.add(point.getCircle())
-                                }
-                                updateInputData()
-                            } else
-                                label.text = "讀檔模式已讀到結尾"
                         }
                     }
-                }
-                button("輸出檔案") {
-                    action {
-                        val path = chooseDirectory("選取輸出路徑")
-                        val pathName = "${path?.absolutePath}\\out.txt"
-                        print(pathName)
-                        val file = File(pathName)
-                        file.printWriter().use { out ->
-                            points.forEach {
-                                out.println(it.out)
-                            }
-                            lines.forEach {
-                                out.println(it.out)
-                            }
-                        }
-                    }
-                }
-                button("執行") {
-                    action {
-                        execute()
-                    }
-                }
-                button("清空畫布") {
-                    action {
-                        testDataList.clear()
-                        clean()
-                    }
-                }
-                button("讀取輸出檔") {
-                    action {
-                        val filters = arrayOf(FileChooser.ExtensionFilter("文字文件", "*.txt"))
-                        val files: List<File> = chooseFile("選取輸出檔", filters, FileChooserMode.Single)
-                        if (files.isNotEmpty())
-                            files.first().apply {
-                                runAsync {
+                    button("讀取輸出檔") {
+                        action {
+                            val filters = arrayOf(FileChooser.ExtensionFilter("文字文件", "*.txt"))
+                            val files: List<File> = chooseFile("選取輸出檔", filters, FileChooserMode.Single)
+                            if (files.isNotEmpty())
+                                files.first().apply {
+                                    runAsync {
 
-                                } ui {
-                                    clean()
-                                    val data = Utils.parseOutputData(this)
-                                    points = data.points
-                                    lines = data.lines
-                                    outputData.text = "OutputData = "
-                                    lines.forEach { line ->
-                                        groups.add(line.getFxLine)
-                                        outputData.text += line.toString()
+                                    } ui {
+                                        clean()
+                                        val data = Utils.parseOutputData(this)
+                                        points = data.points
+                                        lines = data.lines
+                                        outputData.text = "OutputData = "
+                                        lines.forEach { line ->
+                                            groups.add(line.getFxLine)
+                                            outputData.text += "\n${line.toString()}"
+                                        }
+                                        points.forEach { point ->
+                                            groups.add(point.getCircle())
+                                        }
+                                        updateInputData()
                                     }
-                                    points.forEach { point ->
-                                        groups.add(point.getCircle())
-                                    }
-                                    updateInputData()
                                 }
-                            }
+                        }
+                    }
+                }
+                label = label {
+                    minWidth = 100.0
+                    style {
+                        setLabelCss(this)
+                    }
+                }
+                inputData = label(INPUT_DATA) {
+                    minWidth = 100.0
+                    style {
+                        setLabelCss(this)
+                    }
+                }
+                outputData = label(OUTPUT_DATA) {
+                    minWidth = 200.0
+                    style {
+                        setLabelCss(this)
                     }
                 }
             }
-            label = label {
-                style {
-                    setLabelCss(this)
-                }
-            }
-            inputData = label("InputData = ") {
-                style {
-                    setLabelCss(this)
-                }
-            }
-            outputData = label("OutputData = ") {
-                style {
-                    setLabelCss(this)
-                }
-            }
-            stackpane = stackpane {
-                groups = group {
-                    rectangle {
-                        fill = Color.WHITE
-                        width = 600.0
-                        height = 600.0
-                    }
-                }
-                val canvas = canvas {
-                    height = 600.0
-                    width = 600.0
-                }
-                canvas.setOnMouseClicked { evt ->
-                    addPoint(evt)
-                }
-            }
-        }
     }
 
     private fun addPoint(evt: MouseEvent) {
@@ -194,9 +199,9 @@ class HomePage : View() {
         runAsync {
 
         } ui {
-            val panelX = evt.sceneX - BASE_X
-            val panelY = evt.sceneY - BASE_Y
-            points.add(Point(panelX, MAX - panelY))
+            val panelX = evt.sceneX
+            val panelY = evt.sceneY
+            points.add(Point(panelX, panelY))
             groups.add(points.last().getCircle())
             updateInputData()
         }
@@ -205,14 +210,14 @@ class HomePage : View() {
 
     private fun updateInputData() {
         if (testDataList.size != 0) {
-            label.text = "讀檔模式 目前第 ${currentTestDataIndex + 1} 筆"
+            label.text = "讀檔模式\n目前第 ${currentTestDataIndex + 1} 筆"
             points = testDataList[currentTestDataIndex].points
         } else {
             label.text = "手動模式"
         }
-        inputData.text = "InputData = "
+        inputData.text = INPUT_DATA
         points.forEach { point ->
-            inputData.text += "${point.toString()} "
+            inputData.text += "\n${point.toString()} "
         }
     }
 
@@ -220,44 +225,23 @@ class HomePage : View() {
         Utils.sortPoints(points)
         val vd = VoronoiDiagram3Point(points)
         vd.execute()
-        outputData.text = "OutputData = "
+        outputData.text = OUTPUT_DATA
         vd.lines.forEach {
             groups.add(it.getFxLine)
-            outputData.text += it.toString()
+            outputData.text += "\n${it.toString()} "
         }
         lines = vd.lines
-        inputData.text = "InputData = "
+        inputData.text = INPUT_DATA
         points.forEach { point ->
-            inputData.text += "${point.toString()} "
+            inputData.text += "\n${point.toString()} "
         }
     }
 
     private fun clean() {
-        this@HomePage.stackpane.clear()
-        this@HomePage.stackpane = generatePanel()
+        root.clear()
+        root += generateForm()
         points.clear()
-        inputData.text = "InputData = "
-        outputData.text = "OutputData = "
-    }
-
-    private fun generatePanel(): StackPane {
-        return stackpane {
-            layoutX = BASE_X
-            layoutX = BASE_Y
-            groups = group {
-                rectangle {
-                    fill = Color.WHITE
-                    width = 600.0
-                    height = 600.0
-                }
-            }
-            val canvas = canvas {
-                height = 600.0
-                width = 600.0
-            }
-            canvas.setOnMouseClicked { evt ->
-                addPoint(evt)
-            }
-        }
+        inputData.text = INPUT_DATA
+        outputData.text = OUTPUT_DATA
     }
 }
