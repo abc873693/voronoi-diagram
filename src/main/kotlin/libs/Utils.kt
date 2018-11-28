@@ -5,6 +5,9 @@ import voronoiDiagram.models.OutputData
 import voronoiDiagram.models.Point
 import voronoiDiagram.models.TestData
 import java.io.File
+import java.util.*
+import java.util.Vector
+
 
 object Utils {
 
@@ -105,7 +108,7 @@ object Utils {
         return Point((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta)
     }
 
-    fun sortPoints(points: ArrayList<Point>): ArrayList<Point>{
+    fun sortPoints(points: ArrayList<Point>): ArrayList<Point> {
         for (i in 0 until points.size - 1) {
             for (j in (i + 1) until points.size) {
                 if (points[i].x > points[j].x || (points[i].x == points[j].x && (points[i].y > points[j].y))) {
@@ -123,5 +126,12 @@ object Utils {
         val v = Point(c.x - b.x, c.y - b.y)
         val cosX = (u.x * v.x + u.y * v.y) / (u.length * v.length)
         return Math.toDegrees(Math.acos(cosX))
+    }
+
+    fun orientation(p: Point, q: Point, r: Point): Int {
+        val num = ((q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y)).toInt()
+
+        if (num == 0) return 0
+        return if (num > 0) 1 else 2
     }
 }

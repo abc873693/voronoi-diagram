@@ -7,6 +7,8 @@ class Line(var startX: Double, var startY: Double, var endX: Double, var endY: D
     val start = Point(startX, startY)
     val end = Point(endX, endY)
 
+    constructor (a: Point, b: Point) : this(a.x, a.y, b.x, b.y)
+
     val getFxLine
         get() = Line(startX, startY, endX, endY)
 
