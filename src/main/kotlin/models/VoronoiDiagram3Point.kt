@@ -2,11 +2,9 @@ package voronoiDiagram.models
 
 import voronoiDiagram.libs.Utils
 
-class VoronoiDiagram3Point(private var points: ArrayList<Point>) {
+class VoronoiDiagram3Point(points: ArrayList<Point>) : VoronoiDiagram(points) {
 
-    val lines: ArrayList<Line> = ArrayList()
-
-    fun execute() {
+    override fun execute() {
         println("points")
         points.forEach {
             println(it.toString())

@@ -1,8 +1,10 @@
 package voronoiDiagram.models
 
+import javafx.scene.paint.Color
 import javafx.scene.shape.Line
+import tornadofx.style
 
-class Line(var startX: Double, var startY: Double, var endX: Double, var endY: Double) {
+open class Line(var startX: Double, var startY: Double, var endX: Double, var endY: Double) {
 
     val start = Point(startX, startY)
     val end = Point(endX, endY)
@@ -11,6 +13,22 @@ class Line(var startX: Double, var startY: Double, var endX: Double, var endY: D
 
     val getFxLine
         get() = Line(startX, startY, endX, endY)
+
+    fun getConvexHullLine(): Line {
+        val line = Line(startX, startY, endX, endY)
+        line.style {
+            stroke = Color.GREEN
+        }
+        return line
+    }
+
+    fun getDivideLine(): Line {
+        val line = Line(startX, startY, endX, endY)
+        line.style {
+            stroke = Color.GOLD
+        }
+        return line
+    }
 
     val out
         get() = "E ${startX.toInt()} ${startY.toInt()} ${endX.toInt()} ${endY.toInt()}"

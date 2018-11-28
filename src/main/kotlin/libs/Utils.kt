@@ -1,9 +1,6 @@
 package voronoiDiagram.libs
 
-import voronoiDiagram.models.Line
-import voronoiDiagram.models.OutputData
-import voronoiDiagram.models.Point
-import voronoiDiagram.models.TestData
+import voronoiDiagram.models.*
 import java.io.File
 import java.util.*
 import java.util.Vector
@@ -64,7 +61,7 @@ object Utils {
         return (pointA.y - pointB.y) / (pointA.x - pointB.x)
     }
 
-    fun getMidLine(pointA: Point, pointB: Point): Line {
+    fun getMidLine(pointA: Point, pointB: Point): MidLine {
         val midPoint = getMidPoint(pointA, pointB)
         val slope = getSlope(pointA, pointB)
         var startX = 0.0
@@ -94,7 +91,7 @@ object Utils {
             startY = endY.also { endY = startY }
         }
         //print("after : ${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
-        return Line(startX, startY, endX, endY)
+        return MidLine(pointA, pointB, startX, startY, endX, endY)
     }
 
     fun findIntersection(lineA: Line, lineB: Line): Point {

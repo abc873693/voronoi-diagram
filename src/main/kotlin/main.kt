@@ -5,7 +5,6 @@ import javafx.scene.Group
 import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import tornadofx.View
 import javafx.scene.text.FontWeight
@@ -25,7 +24,7 @@ class MainApp : App(HomePage::class, Styles::class)
 class Styles : Stylesheet() {
     init {
         label {
-            translateX = Dimension(1.0,Dimension.LinearUnits.px)
+            translateX = Dimension(1.0, Dimension.LinearUnits.px)
             fontSize = 20.px
             fontWeight = FontWeight.BOLD
             backgroundColor += c("#cecece")
@@ -35,6 +34,8 @@ class Styles : Stylesheet() {
 
 private const val INPUT_DATA = "InputData"
 private const val OUTPUT_DATA = "OutputData"
+public const val PANEL_MIN = 0.0
+public const val PANEL_MAX = 600.0
 
 class HomePage : View() {
 
@@ -45,9 +46,12 @@ class HomePage : View() {
     private var testDataList: ArrayList<TestData> = ArrayList()
     private var currentTestDataIndex = 0
     private var points: ArrayList<Point> = ArrayList()
-    private var lines: ArrayList<Line> = ArrayList()
 
     private var convexHullEnabled = false
+    private var stepByStepEnabled = false
+
+    private var vd: VoronoiDiagram = VoronoiDiagram(points)
+    private var vdList: ArrayList<VoronoiDiagram> = ArrayList()
 
     init {
     }
@@ -68,13 +72,13 @@ class HomePage : View() {
                 groups = group {
                     rectangle {
                         fill = Color.WHITE
-                        width = 600.0
-                        height = 600.0
+                        width = PANEL_MAX
+                        height = PANEL_MAX
                     }
                 }
                 val canvas = canvas {
-                    height = 600.0
-                    width = 600.0
+                    height = PANEL_MAX
+                    width = PANEL_MAX
                 }
                 canvas.setOnMouseClicked { evt ->
                     addPoint(evt)
@@ -129,7 +133,7 @@ class HomePage : View() {
                             points.forEach {
                                 out.println(it.out)
                             }
-                            lines.forEach {
+                            vd.lines.forEach {
                                 out.println(it.out)
                             }
                         }
@@ -138,6 +142,11 @@ class HomePage : View() {
                 button("執行") {
                     action {
                         execute()
+                    }
+                }
+                button("Step by step") {
+                    action {
+                        stepByStep()
                     }
                 }
                 button("Convex Hull") {
@@ -163,14 +172,12 @@ class HomePage : View() {
                                 } ui {
                                     clean()
                                     val data = Utils.parseOutputData(this)
-                                    points = data.points
-                                    lines = data.lines
                                     outputData.text = "OutputData = "
-                                    lines.forEach { line ->
+                                    data.lines.forEach { line ->
                                         groups.add(line.getFxLine)
                                         outputData.text += "\n${line.toString()}"
                                     }
-                                    points.forEach { point ->
+                                    data.points.forEach { point ->
                                         groups.add(point.getCircle())
                                     }
                                     updateInputData()
@@ -223,25 +230,58 @@ class HomePage : View() {
             label.text = "手動模式"
         }
         inputData.text = INPUT_DATA
-        points.forEach { point ->
+        val list = points.sortedWith(compareBy({ it.x }, { it.y }))
+        points.clear()
+        list.forEach { point ->
+            points.add(point)
             inputData.text += "\n${point.toString()} "
         }
     }
 
     private fun execute() {
-        Utils.sortPoints(points)
-        val vd = VoronoiDiagram3Point(points)
+        val list = points.sortedWith(compareBy({ it.x }, { it.y }))
+        points.clear()
+        list.forEach { point ->
+            points.add(point)
+        }
+        vd = VoronoiDiagram3Point(points)
         vd.execute()
         outputData.text = OUTPUT_DATA
         vd.lines.forEach {
             groups.add(it.getFxLine)
             outputData.text += "\n${it.toString()} "
         }
-        lines = vd.lines
-        inputData.text = INPUT_DATA
-        points.forEach { point ->
-            inputData.text += "\n${point.toString()} "
+        updatePanel()
+    }
+
+    private fun stepByStep() {
+        val vdNextList: ArrayList<VoronoiDiagram> = ArrayList()
+        if (!stepByStepEnabled) {
+            val list = points.sortedWith(compareBy({ it.x }, { it.y }))
+            points.clear()
+            list.forEach { point ->
+                points.add(point)
+            }
+            vd = VoronoiDiagram(points)
+            vdList.addAll(vd.divide())
+            stepByStepEnabled = true
         }
+        for (i in 0..(vdList.size - 2) step 2) {
+            println("index $i")
+            vdNextList.add(VoronoiDiagram.conquer(vdList[i], vdList[i + 1]))
+        }
+        if (vdList.size % 2 == 1)
+            vdNextList.add(vdList.last())
+        vdList.clear()
+        vdList.addAll(vdNextList)
+        if (vdList.size == 1) {
+            outputData.text = OUTPUT_DATA
+            vd.lines.forEach {
+                groups.add(it.getFxLine)
+                outputData.text += "\n${it.toString()} "
+            }
+        }
+        updatePanel()
     }
 
     private fun updatePanel() {
@@ -262,12 +302,27 @@ class HomePage : View() {
                     if (index != result.size - 1)
                         Line(result[index], result[index + 1])
                     else Line(result[0], result[index])
-                groups.add(line.getFxLine)
+                groups.add(line.getConvexHullLine())
             }
         }
         points.forEach { point ->
             groups.add(point.getCircle())
             groups.add(point.getLabel())
+        }
+        if (stepByStepEnabled) {
+            vdList.forEachIndexed { index, voronoiDiagram ->
+                voronoiDiagram.lines.forEach { line ->
+                    groups.add(line.getFxLine)
+                }
+                if (index != vdList.size - 1) {
+                    val x = (vdList[index].points.last().x + vdList[index + 1].points.first().x) / 2
+                    val line = Line(
+                        Point(x, PANEL_MIN),
+                        Point(x, PANEL_MAX)
+                    )
+                    groups.add(line.getDivideLine())
+                }
+            }
         }
         updateInputData()
     }
@@ -276,7 +331,10 @@ class HomePage : View() {
         root.clear()
         root += generateForm()
         points.clear()
+        vdList.clear()
         inputData.text = INPUT_DATA
         outputData.text = OUTPUT_DATA
+        convexHullEnabled = false
+        stepByStepEnabled = false
     }
 }
