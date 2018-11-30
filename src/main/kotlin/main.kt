@@ -314,6 +314,14 @@ class HomePage : View() {
                 voronoiDiagram.lines.forEach { line ->
                     groups.add(line.getFxLine)
                 }
+                val convexHull = voronoiDiagram.convexHull()
+                convexHull.forEachIndexed { i, _ ->
+                    val line =
+                        if (i != convexHull.size - 1)
+                            Line(convexHull[i], convexHull[i + 1])
+                        else Line(convexHull[0], convexHull[i])
+                    groups.add(line.getConvexHullLine())
+                }
                 if (index != vdList.size - 1) {
                     val x = (vdList[index].points.last().x + vdList[index + 1].points.first().x) / 2
                     val line = Line(
