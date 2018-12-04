@@ -9,12 +9,14 @@ import tornadofx.Stylesheet.Companion.label
 
 class Point(var x: Double, var y: Double) {
 
+    var color: Color = Color.RED
+
     val length
         get() = Math.sqrt(x * x + y * y)
 
     fun getCircle(): Circle {
         val circle = Circle(x, y, 3.0)
-        circle.fill = Color.RED
+        circle.fill = color
         return circle
     }
 
