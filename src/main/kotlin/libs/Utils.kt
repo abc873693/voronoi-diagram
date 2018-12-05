@@ -86,12 +86,8 @@ object Utils {
                 endX = (endY - midPoint.y) / (-(1 / slope)) + midPoint.x
             }
         }
-        if (startX > endX || (startX == endX && startY > endY)) {
-            startX = endX.also { endX = startX }
-            startY = endY.also { endY = startY }
-        }
         //print("after : ${startX.toInt()}, ${startY.toInt()}, ${endX.toInt()}, ${endY.toInt()}\n")
-        return MidLine(pointA, pointB, startX, startY, endX, endY)
+        return MidLine(Point(startX, startY), Point(endX, endY), pointA, pointB)
     }
 
     fun findIntersection(lineA: Line, lineB: Line): Point {

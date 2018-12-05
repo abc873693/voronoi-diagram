@@ -43,101 +43,101 @@ class VoronoiDiagram3Point(points: ArrayList<Point>) : VoronoiDiagram(points) {
             println("lines2 ${lines[2].toString()}")
             if (intersection01.x in 0.0..600.0 && intersection01.y in 0.0..600.0) {
                 /*if (points[2].y in points[0].y..points[1].y || points[0].y >points[1].y) {
-                    lines[0].endX = intersection01.x
-                    lines[0].endY = intersection01.y
+                    lines[0].end.x = intersection01.x
+                    lines[0].end.y = intersection01.y
                 } else {
-                    lines[0].startX = intersection01.x
-                    lines[0].startY = intersection01.y
+                    lines[0].start.x = intersection01.x
+                    lines[0].start.y = intersection01.y
                 }
                 if (points[0].y in points[1].y..points[2].y || points[1].y>points[2].y) {
-                    lines[1].endX = intersection12.x
-                    lines[1].endY = intersection12.y
+                    lines[1].end.x = intersection12.x
+                    lines[1].end.y = intersection12.y
                 } else {
-                    lines[1].startX = intersection12.x
-                    lines[1].startY = intersection12.y
+                    lines[1].start.x = intersection12.x
+                    lines[1].start.y = intersection12.y
                 }
                 if (points[1].y in points[0].y..points[2].y || points[0].y < points[2].y) {
-                    lines[2].endX = intersection02.x
-                    lines[2].endY = intersection02.y
+                    lines[2].end.x = intersection02.x
+                    lines[2].end.y = intersection02.y
                 } else {
-                    lines[2].startX = intersection02.x
-                    lines[2].startY = intersection02.y
+                    lines[2].start.x = intersection02.x
+                    lines[2].start.y = intersection02.y
                 }*/
-                if (lines[0].startX == 0.0) {
+                if (lines[0].start.x == 0.0) {
                     if (points[2].x > intersection01.x) {
-                        lines[0].endX = intersection01.x
-                        lines[0].endY = intersection01.y
+                        lines[0].end.x = intersection01.x
+                        lines[0].end.y = intersection01.y
                     } else {
-                        lines[0].startX = intersection01.x
-                        lines[0].startY = intersection01.y
+                        lines[0].start.x = intersection01.x
+                        lines[0].start.y = intersection01.y
                     }
-                } else if (lines[0].startY == 0.0) {
+                } else if (lines[0].start.y == 0.0) {
                     if (points[2].y < intersection01.y) {
-                        lines[0].endX = intersection01.x
-                        lines[0].endY = intersection01.y
+                        lines[0].end.x = intersection01.x
+                        lines[0].end.y = intersection01.y
                     } else {
-                        lines[0].startX = intersection01.x
-                        lines[0].startY = intersection01.y
+                        lines[0].start.x = intersection01.x
+                        lines[0].start.y = intersection01.y
                     }
-                } else if (lines[0].startY == 600.0) {
+                } else if (lines[0].start.y == 600.0) {
                     if (points[2].y > intersection01.y) {
-                        lines[0].startX = intersection01.x
-                        lines[0].startY = intersection01.y
+                        lines[0].start.x = intersection01.x
+                        lines[0].start.y = intersection01.y
                     } else {
-                        lines[0].endX = intersection01.x
-                        lines[0].endY = intersection01.y
+                        lines[0].end.x = intersection01.x
+                        lines[0].end.y = intersection01.y
                     }
                 }
 
-                if (lines[1].startX == 0.0) {
+                if (lines[1].start.x == 0.0) {
                     if (points[0].x > intersection12.x) {
-                        lines[1].endX = intersection12.x
-                        lines[1].endY = intersection12.y
+                        lines[1].end.x = intersection12.x
+                        lines[1].end.y = intersection12.y
                     } else {
-                        lines[1].startX = intersection12.x
-                        lines[1].startY = intersection12.y
+                        lines[1].start.x = intersection12.x
+                        lines[1].start.y = intersection12.y
                     }
-                } else if (lines[1].startY == 0.0) {
+                } else if (lines[1].start.y == 0.0) {
                     if (points[0].x < middlePoint12.x) {
-                        lines[1].startX = intersection12.x
-                        lines[1].startY = intersection12.y
+                        lines[1].start.x = intersection12.x
+                        lines[1].start.y = intersection12.y
                     } else {
-                        lines[1].endX = intersection12.x
-                        lines[1].endY = intersection12.y
+                        lines[1].end.x = intersection12.x
+                        lines[1].end.y = intersection12.y
                     }
-                } else if (lines[1].startY == 600.0) {
+                } else if (lines[1].start.y == 600.0) {
                     if (points[0].x > intersection12.x) {
-                        lines[1].endX = intersection12.x
-                        lines[1].endY = intersection12.y
+                        lines[1].end.x = intersection12.x
+                        lines[1].end.y = intersection12.y
                     } else {
-                        lines[1].startX = intersection12.x
-                        lines[1].startY = intersection12.y
+                        lines[1].start.x = intersection12.x
+                        lines[1].start.y = intersection12.y
                     }
                 }
 
-                if (lines[2].startX == 0.0) {
+                if (lines[2].start.x == 0.0) {
                     if (points[1].y > intersection02.y) {
-                        lines[2].endX = intersection02.x
-                        lines[2].endY = intersection02.y
+                        lines[2].end.x = intersection02.x
+                        lines[2].end.y = intersection02.y
                     } else {
-                        lines[2].startX = intersection02.x
-                        lines[2].startY = intersection02.y
+                        lines[2].start.x = intersection02.x
+                        lines[2].start.y = intersection02.y
                     }
-                } else if (lines[2].startY == 0.0) {
+                } else if (lines[2].start.y == 0.0) {
                     if (points[1].y < intersection02.y) {
-                        lines[2].startX = intersection02.x
-                        lines[2].startY = intersection02.y
+                        lines[2].start.x = intersection02.x
+                        lines[2].start.y = intersection02.y
                     } else {
-                        lines[2].endX = intersection02.x
-                        lines[2].endY = intersection02.y
+                        lines[2].end.x = intersection02.x
+                        lines[2].end.y = intersection02.y
                     }
-                } else if (lines[2].startY == 600.0) {
+                } else if (lines[2].start.y == 600.0) {
                     if (points[1].y < intersection02.y) {
-                        lines[2].endX = intersection02.x
-                        lines[2].endY = intersection02.y
+                        lines[2].end.x = intersection02.x
+                        lines[2].end.y = intersection02.y
                     } else {
-                        lines[2].startX = intersection02.x
-                        lines[2].startY = intersection02.y
+                        lines[2].start.x = intersection02.x
+                        lines[2].start.y = intersection02.y
                     }
                 }
             } else {
