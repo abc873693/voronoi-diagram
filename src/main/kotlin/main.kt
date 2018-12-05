@@ -174,7 +174,7 @@ class HomePage : View() {
                                     val data = Utils.parseOutputData(this)
                                     outputData.text = "OutputData = "
                                     data.lines.forEach { line ->
-                                        groups.add(line.getFxLine)
+                                        groups.add(line.getFxLine())
                                         outputData.text += "\n${line.toString()}"
                                     }
                                     data.points.forEach { point ->
@@ -248,7 +248,7 @@ class HomePage : View() {
         vd.execute()
         outputData.text = OUTPUT_DATA
         vd.lines.forEach {
-            groups.add(it.getFxLine)
+            groups.add(it.getFxLine())
             outputData.text += "\n${it.toString()} "
         }
         updatePanel()
@@ -277,7 +277,7 @@ class HomePage : View() {
         if (vdList.size == 1) {
             outputData.text = OUTPUT_DATA
             vd.lines.forEach {
-                groups.add(it.getFxLine)
+                groups.add(it.getFxLine())
                 outputData.text += "\n${it.toString()} "
             }
         }
@@ -295,7 +295,7 @@ class HomePage : View() {
                     if (index != result.size - 1)
                         Line(result[index], result[index + 1])
                     else Line(result[0], result[index])
-                groups.add(line.getFxLine)
+                groups.add(line.getFxLine())
             }
             result.forEachIndexed { index, point ->
                 val line =
@@ -312,7 +312,7 @@ class HomePage : View() {
         if (stepByStepEnabled) {
             vdList.forEachIndexed { index, voronoiDiagram ->
                 voronoiDiagram.lines.forEach { line ->
-                    groups.add(line.getFxLine)
+                    groups.add(line.getFxLine())
                 }
                 val convexHull = voronoiDiagram.convexHull()
                 convexHull.forEachIndexed { i, _ ->

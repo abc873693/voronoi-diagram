@@ -11,7 +11,7 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
     val convexHullPoints: ArrayList<Point> = ArrayList()
     var leftmostIndex = 0
     var startIndex = 0
-    var endIndex = -1
+    var endIndex = 0
 
     init {
         leftmostIndex = findLeftmost()
@@ -43,8 +43,8 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
 
     fun findLineIndex(a: Point, b: Point): Int {
         lines.forEachIndexed { index, midLine ->
-            if ((midLine.startX == a.x && midLine.startY == a.y) && (midLine.endX == b.x && midLine.endY == b.y) ||
-                (midLine.startX == b.x && midLine.startY == b.y) && (midLine.endX == a.x && midLine.endY == a.y)
+            if ((midLine.start.x == a.x && midLine.start.y == a.y) && (midLine.end.x == b.x && midLine.end.y == b.y) ||
+                (midLine.start.x == b.x && midLine.start.y == b.y) && (midLine.end.x == a.x && midLine.end.y == a.y)
             )
                 return index
         }
@@ -108,6 +108,12 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
         return convexHullLostPoints
     }
 
+    fun resetLineColor() {
+        lines.forEach {
+            it.resetColor()
+        }
+    }
+
     companion object {
         fun conquer(left: VoronoiDiagram, right: VoronoiDiagram): VoronoiDiagram {
             val points: ArrayList<Point> = ArrayList()
@@ -118,42 +124,66 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
             val rPoints = right.findIndex(result)
             var l = 0
             var r = 0
-            println("${lPoints.size}")
-            println("${rPoints.size}")
+            println("${left.startIndex} ${left.endIndex}")
+            println("${right.startIndex} ${right.endIndex}")
             do {
                 val leftPoint: Point = lPoints[l]
                 val rightPoint: Point = rPoints[r]
-                val lineA = Utils.getMidLine(leftPoint, rightPoint)
+                var lineA = Utils.getMidLine(leftPoint, rightPoint)
+                lineA.color = Color.GRAY
                 var lineB: MidLine
-                if (l < lPoints.size && r < rPoints.size) {
-                    val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
-                    val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
-                    if (a.y > b.y) {
+                if (left.points.size == 1 && right.points.size == 1) {
+                    l++
+                    r++
+                } else if (l < lPoints.size && r < rPoints.size) {
+                    var c: Point
+                    var next: Point
+                    if (r == rPoints.size - 1) {
+                        c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
+                        next = lPoints[l + 1]
                         l++
-                        println("a = ${a.toString()}")
-                        lineA.startX = a.x
-                        lineA.startY = a.y
-                        println(lineA.toString())
-                    } else {
+                        lineA.cut(next, c)
+                        result.lines.add(lineA)
+                        if (l == lPoints.size - 1) {
+                            lineA = Utils.getMidLine(lPoints.last(), rPoints.last())
+                            lineA.color = Color.GRAY
+                            c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l - 1]))
+                            next = lPoints[l - 1]
+                        }
+                    } else if (l == lPoints.size - 1) {
+                        c = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
+                        next = rPoints[r + 1]
                         r++
-                        println("b = ${b.toString()}")
-                        lineA.startX = b.x
-                        lineA.startY = b.y
+                        lineA.cut(next, c)
+                        result.lines.add(lineA)
+                        if (r == rPoints.size - 1) {
+                            lineA = Utils.getMidLine(lPoints.last(), rPoints.last())
+                            lineA.color = Color.GRAY
+                            c = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r - 1]))
+                            next = rPoints[r - 1]
+                        }
+                    } else {
+                        val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
+                        val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
+                        c = if (a.y < b.y) {
+                            l++
+                            next = lPoints[l]
+                            a
+                        } else {
+                            r++
+                            next = rPoints[r]
+                            b
+                        }
                     }
-                    if(l ==lPoints.size-1)
-                    {
-                        result.lines.add(Utils.getMidLine(lPoints.last(), rPoints[r]))
-                        break
-                    }
-                    if(r ==rPoints.size-1)
-                    {
-                        result.lines.add(Utils.getMidLine(lPoints[l], rPoints.last()))
-                        break
-                    }
+                    lineA.cut(next, c)
                 }
+                println("lines = ${lineA.toString()}")
                 result.lines.add(lineA)
-            } while (l < lPoints.size && r < rPoints.size)
+                if (l == lPoints.size - 1 && r == rPoints.size - 1) break
+            } while (l < lPoints.size || r < rPoints.size)
             println(result.lines.size)
+            left.resetLineColor()
+            right.resetLineColor()
             result.lines.addAll(left.lines)
             result.lines.addAll(right.lines)
             result.sortPoints()

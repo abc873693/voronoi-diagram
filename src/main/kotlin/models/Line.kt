@@ -6,13 +6,20 @@ import tornadofx.style
 
 open class Line(var start: Point, var end: Point) {
 
+    var color: Color = Color.BLACK
+
     constructor (startX: Double, startY: Double, endX: Double, endY: Double) : this(
         Point(startX, startY),
         Point(endX, endY)
     )
 
-    val getFxLine
-        get() = Line(start.x, start.y, end.x, end.y)
+    fun getFxLine(): Line {
+        val line = Line(start.x, start.y, end.x, end.y)
+        line.style {
+            stroke = color
+        }
+        return line
+    }
 
     fun getConvexHullLine(): Line {
         val line = Line(start.x, start.y, end.x, end.y)
@@ -28,6 +35,10 @@ open class Line(var start: Point, var end: Point) {
             stroke = Color.GOLD
         }
         return line
+    }
+
+    fun resetColor() {
+        color = Color.BLACK
     }
 
     val out

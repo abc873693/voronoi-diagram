@@ -1,5 +1,6 @@
 package voronoiDiagram.models
 
+import javafx.scene.paint.Color
 import voronoiDiagram.libs.Utils
 
 enum class Position {
