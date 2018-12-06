@@ -17,9 +17,6 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
         leftmostIndex = findLeftmost()
         convexHull()
         endIndex = points.size - 1
-        points.forEach {
-            it.color = Color.RED
-        }
     }
 
     open fun execute() {
@@ -130,8 +127,16 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
             println("----------------")
             left.setColor(Color.PURPLE)
             right.setColor(Color.YELLOWGREEN)
-            points.addAll(left.points)
-            points.addAll(right.points)
+            left.points.forEach {
+                it.color = Color.PURPLE
+                points.add(it)
+            }
+            right.points.forEach {
+                it.color = Color.YELLOWGREEN
+                points.add(it)
+            }
+            /* points.addAll(left.points)
+             points.addAll(right.points)*/
             val result = VoronoiDiagram(points)
             val lPoints = left.findIndex(result)
             val rPoints = right.findIndex(result)

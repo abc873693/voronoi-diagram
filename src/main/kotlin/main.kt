@@ -378,6 +378,9 @@ class HomePage : View() {
                 vdList.first().lines.forEach {
                     it.resetColor()
                 }
+                vdList.first().points.forEach {
+                    it.resetColor()
+                }
             }
         } else {
             points.forEach { point ->

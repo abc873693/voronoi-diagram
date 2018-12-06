@@ -20,6 +20,10 @@ class Point(var x: Double, var y: Double) {
         return circle
     }
 
+    fun resetColor() {
+        color = Color.RED
+    }
+
     fun getLabel(): Label {
         val label = Label(toString())
         label.layoutX = x + 1
