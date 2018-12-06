@@ -14,6 +14,7 @@ open class MidLine(var start: Point, var end: Point) {
     var color: Color = Color.BLACK
     val originStart: Point
     val originEnd: Point
+    var isHP = true
 
     constructor (startX: Double, startY: Double, endX: Double, endY: Double) : this(
         Point(startX, startY),
@@ -53,7 +54,7 @@ open class MidLine(var start: Point, var end: Point) {
     fun getFxLine(): Line {
         val line = Line(start.x, start.y, end.x, end.y)
         line.style {
-            stroke = Color.BLACK
+            stroke = color
         }
         return line
     }

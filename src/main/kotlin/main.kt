@@ -338,7 +338,7 @@ class HomePage : View() {
         if (stepByStepEnabled) {
             vdList.forEachIndexed { index, voronoiDiagram ->
                 println("voronoiDiagram.lines ${voronoiDiagram.lines.size}")
-               if(voronoiDiagram.lines.isNotEmpty()) groups.add(voronoiDiagram.lines.first().getFxLine())
+                if (voronoiDiagram.lines.isNotEmpty()) groups.add(voronoiDiagram.lines.first().getFxLine())
                 val convexHull = voronoiDiagram.convexHull()
                 convexHull.forEachIndexed { i, _ ->
                     val line =
@@ -372,6 +372,11 @@ class HomePage : View() {
                     //println(it.color)
                     groups.add(it.getCircle())
                     groups.add(it.getLabel())
+                }
+            }
+            if (vdList.size == 1) {
+                vdList.first().lines.forEach {
+                    it.resetColor()
                 }
             }
         } else {
