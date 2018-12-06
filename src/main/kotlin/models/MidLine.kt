@@ -15,11 +15,11 @@ class MidLine(start: Point, end: Point, var a: Point, var b: Point) :
     init {
         if (isVertical()) {
             if (start.y > end.y) {
-                this.start = this.start.also { this.end = this.start }
+                this.start = this.end.also { this.end = this.start }
             }
         } else {
             if (start.x > end.x) {
-                this.start = this.start.also { this.end = this.start }
+                this.start = this.end.also { this.end = this.start }
             }
         }
         originStart = Point(start.x, start.y)
@@ -27,15 +27,16 @@ class MidLine(start: Point, end: Point, var a: Point, var b: Point) :
     }
 
     fun cut(next: Point, intersection: Point) {
+        println("line ${toString()} next = ${next.toString()} ${isWhere(next)}")
         when (isWhere(next)) {
             Position.TOP ->
-                start = intersection
+                end = intersection
             Position.BOTTOM ->
-                end = intersection
-            Position.LEFT ->
                 start = intersection
-            Position.RIGHT ->
+            Position.LEFT ->
                 end = intersection
+            Position.RIGHT ->
+                start = intersection
             else -> {
             }
         }
@@ -46,16 +47,16 @@ class MidLine(start: Point, end: Point, var a: Point, var b: Point) :
             val slope = Utils.getSlope(originStart, originEnd)
             val slopeToP = Utils.getSlope(originStart, p)
             return when {
-                slopeToP < slope -> Position.LEFT
-                slopeToP > slope -> Position.RIGHT
+                slopeToP < slope -> Position.RIGHT
+                slopeToP > slope -> Position.LEFT
                 else -> Position.IN_LINE
             }
         } else {
             val slope = Utils.getSlope(originStart, originEnd)
             val slopeToP = Utils.getSlope(originStart, p)
             return when {
-                slopeToP < slope -> Position.BOTTOM
-                slopeToP > slope -> Position.TOP
+                slopeToP < slope -> Position.TOP
+                slopeToP > slope -> Position.BOTTOM
                 else -> Position.IN_LINE
             }
         }

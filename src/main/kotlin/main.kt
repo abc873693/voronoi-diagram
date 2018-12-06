@@ -276,10 +276,10 @@ class HomePage : View() {
             vdNextList.clear()
             var i = 0
             while (i < (vdList.size - 1)) {
-                println("index $i")
+                //println("index $i")
                 val first = (vdList[i].points.last().x / ranges[rangeIndex]).toInt()
                 val second = (vdList[i + 1].points.first().x / ranges[rangeIndex]).toInt()
-                println("first = $first ,second = $second")
+                //println("first = $first ,second = $second")
                 if (second - first <= 1) {
                     vdNextList.add(VoronoiDiagram.conquer(vdList[i], vdList[i + 1]))
                     i += 2
@@ -293,12 +293,16 @@ class HomePage : View() {
             }
             rangeIndex++
         }
-        println("step by step ranges = ${ranges[rangeIndex]} vdList = ${vdList.size} vdNextList = ${vdNextList.size}\n")
+        //println("step by step ranges = ${ranges[rangeIndex]} vdList = ${vdList.size} vdNextList = ${vdNextList.size}\n")
         label.text = "step by step \nranges = ${ranges[rangeIndex]}vdList = ${vdList.size}\n"
         if (vdNextList.size != 0) {
             vdList.clear()
             vdList.addAll(vdNextList)
-            println("vdNextList = ${sumVD(vdNextList)} ${vd.points.size}")
+            //println("vdNextList = ${sumVD(vdNextList)} ${vd.points.size}")
+            println("index = $rangeIndex")
+            vdList.forEachIndexed { index, voronoiDiagram ->
+                println("$index -> ${voronoiDiagram.points}")
+            }
         }
         if (vdList.size == 1) {
             outputData.text = OUTPUT_DATA
