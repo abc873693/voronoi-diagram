@@ -46,6 +46,7 @@ class HomePage : View() {
     private var testDataList: ArrayList<TestData> = ArrayList()
     private var currentTestDataIndex = 0
     private var points: ArrayList<Point> = ArrayList()
+    var outputText = OUTPUT_DATA
 
     private var convexHullEnabled = false
     private var stepByStepEnabled = false
@@ -198,8 +199,8 @@ class HomePage : View() {
                     setLabelCss(this)
                 }
             }
-            outputData = label(OUTPUT_DATA) {
-                minWidth = 200.0
+            outputData = label(outputText) {
+                minWidth = 250.0
                 style {
                     setLabelCss(this)
                 }
@@ -236,22 +237,27 @@ class HomePage : View() {
             points.add(point)
             inputData.text += "\n${point.toString()} "
         }
+        println("updateInputData vdList size = ${vdList.size}")
+        if (vdList.size == 1) {
+            runAsync {
+
+            } ui {
+                outputData.text = OUTPUT_DATA
+                vdList.first().lines.forEach {
+                    groups.add(it.getFxLine())
+                    outputData.text += "\n${it.toString()} "
+                }
+            }
+        }
     }
 
     private fun execute() {
-        val list = points.sortedWith(compareBy({ it.x }, { it.y }))
-        points.clear()
-        list.forEach { point ->
-            points.add(point)
+        stepByStepEnabled = false
+        if (points.size == 0) return
+        while (vdList.size != 1) {
+            stepByStep()
         }
-        vd = VoronoiDiagram3Point(points)
-        vd.execute()
-        outputData.text = OUTPUT_DATA
-        vd.lines.forEach {
-            groups.add(it.getFxLine())
-            outputData.text += "\n${it.toString()} "
-        }
-        updatePanel()
+        stepByStep()
     }
 
     var ranges = arrayOf(1, 2, 4, 9, 18, 37, 75, 150, 300, 600)
@@ -303,13 +309,6 @@ class HomePage : View() {
             vdList.forEachIndexed { index, voronoiDiagram ->
                 println("$index -> ${voronoiDiagram.points}")
             }*/
-        }
-        if (vdList.size == 1) {
-            outputData.text = OUTPUT_DATA
-            vd.lines.forEach {
-                groups.add(it.getFxLine())
-                outputData.text += "\n${it.toString()} "
-            }
         }
         updatePanel()
     }
