@@ -335,10 +335,6 @@ class HomePage : View() {
                 groups.add(line.getConvexHullLine())
             }
         }
-        points.forEach { point ->
-            groups.add(point.getCircle())
-            groups.add(point.getLabel())
-        }
         if (stepByStepEnabled) {
             vdList.forEachIndexed { index, voronoiDiagram ->
                 voronoiDiagram.lines.forEach { line ->
@@ -369,6 +365,16 @@ class HomePage : View() {
                         }
                     }
                 }
+                voronoiDiagram.points.forEach {
+                    println(it.color)
+                    groups.add(it.getCircle())
+                    groups.add(it.getLabel())
+                }
+            }
+        } else {
+            points.forEach { point ->
+                groups.add(point.getCircle())
+                groups.add(point.getLabel())
             }
         }
         updateInputData()

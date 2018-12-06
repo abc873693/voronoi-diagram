@@ -109,6 +109,15 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
         return convexHullLostPoints
     }
 
+    fun setColor(color: Color) {
+        lines.forEach {
+            it.color = color
+        }
+        points.forEach {
+            it.color = color
+        }
+    }
+
     fun resetLineColor() {
         lines.forEach {
             it.resetColor()
@@ -118,6 +127,9 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
     companion object {
         fun conquer(left: VoronoiDiagram, right: VoronoiDiagram): VoronoiDiagram {
             val points: ArrayList<Point> = ArrayList()
+            println("----------------")
+            left.setColor(Color.PURPLE)
+            right.setColor(Color.YELLOWGREEN)
             points.addAll(left.points)
             points.addAll(right.points)
             val result = VoronoiDiagram(points)
@@ -149,6 +161,7 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                 } else if (l == lPoints.size - 1 && r == rPoints.size - 1) {
                     c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l]))
                     next = lPoints[l]
+                    if (result.lines.isNotEmpty()) result.lines.last().cut(c, next)
                     l++
                     r++
                 } else {
@@ -165,7 +178,6 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                     }
                 }
                 lineA.cut(next, c)
-                lineA.color = Color.GRAY
                 result.lines.add(lineA)
             } while (l < lPoints.size && r < rPoints.size)
             println(result.lines.size)
