@@ -83,13 +83,13 @@ open class MidLine(var start: Point, var end: Point) {
         println("line ${toString()} next = ${next.toString()} ${isWhere(next)}")
         when (isWhere(next)) {
             Position.TOP ->
-                end = Point(intersection.x, intersection.y)
+                start = Point(intersection.x, intersection.y)
             Position.BOTTOM ->
-                start = Point(intersection.x, intersection.y)
-            Position.LEFT ->
                 end = Point(intersection.x, intersection.y)
+            Position.LEFT ->
+                start  = Point(intersection.x, intersection.y)
             Position.RIGHT ->
-                start = Point(intersection.x, intersection.y)
+                end  = Point(intersection.x, intersection.y)
             else -> {
             }
         }

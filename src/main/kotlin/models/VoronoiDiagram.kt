@@ -193,8 +193,10 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                     if (last != null && d != null) {
                         // if(lineA.isVertical())
                         lineA.fix()
-                        lineA.start = d
-                        lineA.end = c
+                        //lineA.start = d
+                        lineA.cut(last,d)
+                        //lineA.end = c
+                        lineA.cut(next,c)
                         println("${last.toString()} ${d.toString()} ")
                         println("${next.toString()} ${c.toString()} ")
                     } else {
