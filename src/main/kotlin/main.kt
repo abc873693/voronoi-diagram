@@ -226,7 +226,7 @@ class HomePage : View() {
         if (testDataList.size != 0) {
             label.text = "讀檔模式\n目前第 ${currentTestDataIndex + 1} 筆"
             points = testDataList[currentTestDataIndex].points
-        } else {
+        } else if (!stepByStepEnabled) {
             label.text = "手動模式"
         }
         inputData.text = INPUT_DATA
@@ -254,6 +254,10 @@ class HomePage : View() {
         updatePanel()
     }
 
+    var ranges = arrayOf(1, 2, 4, 9, 18, 37, 75, 150, 300, 600)
+    var rangeIndex = 0
+
+
     private fun stepByStep() {
         val vdNextList: ArrayList<VoronoiDiagram> = ArrayList()
         if (!stepByStepEnabled) {
@@ -265,15 +269,37 @@ class HomePage : View() {
             vd = VoronoiDiagram(points)
             vdList.addAll(vd.divide())
             stepByStepEnabled = true
+            rangeIndex = 0
         }
-        for (i in 0..(vdList.size - 2) step 2) {
-            println("index $i")
-            vdNextList.add(VoronoiDiagram.conquer(vdList[i], vdList[i + 1]))
+        var hasConquer = false
+        while (!hasConquer && ranges[rangeIndex] != 600) {
+            vdNextList.clear()
+            var i = 0
+            while (i < (vdList.size - 1)) {
+                println("index $i")
+                val first = (vdList[i].points.last().x / ranges[rangeIndex]).toInt()
+                val second = (vdList[i + 1].points.first().x / ranges[rangeIndex]).toInt()
+                println("first = $first ,second = $second")
+                if (second - first <= 1) {
+                    vdNextList.add(VoronoiDiagram.conquer(vdList[i], vdList[i + 1]))
+                    i += 2
+                    hasConquer = true
+                } else {
+                    vdNextList.add(vdList[i])
+                    i++
+                }
+                if (i == vdList.size - 1)
+                    vdNextList.add(vdList[i])
+            }
+            rangeIndex++
         }
-        if (vdList.size % 2 == 1)
-            vdNextList.add(vdList.last())
-        vdList.clear()
-        vdList.addAll(vdNextList)
+        println("step by step ranges = ${ranges[rangeIndex]} vdList = ${vdList.size} vdNextList = ${vdNextList.size}\n")
+        label.text = "step by step \nranges = ${ranges[rangeIndex]}vdList = ${vdList.size}\n"
+        if (vdNextList.size != 0) {
+            vdList.clear()
+            vdList.addAll(vdNextList)
+            println("vdNextList = ${sumVD(vdNextList)} ${vd.points.size}")
+        }
         if (vdList.size == 1) {
             outputData.text = OUTPUT_DATA
             vd.lines.forEach {
@@ -322,17 +348,34 @@ class HomePage : View() {
                         else Line(convexHull[0], convexHull[i])
                     groups.add(line.getConvexHullLine())
                 }
-                if (index != vdList.size - 1) {
-                    val x = (vdList[index].points.last().x + vdList[index + 1].points.first().x) / 2
-                    val line = Line(
-                        Point(x, PANEL_MIN),
-                        Point(x, PANEL_MAX)
-                    )
-                    groups.add(line.getDivideLine())
+                var range = 0
+                val lines: ArrayList<Line> = ArrayList()
+                if (ranges.size - 1 != rangeIndex) {
+                    while (range < 600) {
+                        range += ranges[rangeIndex]
+                        val line = Line(
+                            Point(range.toDouble(), PANEL_MIN),
+                            Point(range.toDouble(), PANEL_MAX)
+                        )
+                        lines.add(line)
+                    }
+                    lines.forEachIndexed { i, line ->
+                        if (lines.size - 1 != i) {
+                            groups.add(line.getDivideLine())
+                        }
+                    }
                 }
             }
         }
         updateInputData()
+    }
+
+    private fun sumVD(list: ArrayList<VoronoiDiagram>): Int {
+        var sum = 0
+        list.forEach {
+            sum += it.points.size
+        }
+        return sum
     }
 
     private fun clean() {
