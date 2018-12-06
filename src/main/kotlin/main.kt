@@ -365,7 +365,7 @@ class HomePage : View() {
                     }
                 }
                 voronoiDiagram.lines.forEach { line ->
-                    println("lines ${line.start.toString()}")
+                    println("lines ${line.toString()} isVertical = ${line.isVertical()}")
                     groups.add(line.getFxLine())
                 }
                 voronoiDiagram.points.forEach {

@@ -38,6 +38,18 @@ open class MidLine(var start: Point, var end: Point) {
         originEnd = Point(end.x, end.y)
     }
 
+    fun fix() {
+        if (isVertical()) {
+            if (start.y > end.y) {
+                this.start = this.end.also { this.end = this.start }
+            }
+        } else {
+            if (start.x > end.x) {
+                this.start = this.end.also { this.end = this.start }
+            }
+        }
+    }
+
     fun getFxLine(): Line {
         val line = Line(start.x, start.y, end.x, end.y)
         line.style {

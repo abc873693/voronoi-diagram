@@ -141,43 +141,63 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
             println("right startIndex = ${right.startIndex} endIndex = ${right.endIndex}")
             println("${lPoints}")
             println("${rPoints}")
-            var c: Point
-            var next: Point
+            var c: Point? = null
+            var next: Point? = null
             do {
-                val leftPoint: Point = lPoints[l]
-                val rightPoint: Point = rPoints[r]
-                var lineA = Utils.getMidLine(leftPoint, rightPoint)
+                val lineA = Utils.getMidLine(lPoints[l], rPoints[r])
+                val last = next
+                val d = c
                 println("l  = $l r  = $r")
                 println("leftPoint = ${lPoints[l]} rightPoint = ${rPoints[r]}")
                 println("lineA  = ${lineA.toString()}")
-                if (l == lPoints.size - 1 && r < rPoints.size - 1) {
-                    c = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
-                    next = rPoints[r + 1]
-                    r++
-                } else if (l < lPoints.size - 1 && r == rPoints.size - 1) {
-                    c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
-                    next = lPoints[l + 1]
-                    l++
-                } else if (l == lPoints.size - 1 && r == rPoints.size - 1) {
-                    c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l]))
-                    next = lPoints[l]
-                    if (result.lines.isNotEmpty()) result.lines.last().cut(c, next)
+                if (l == lPoints.size - 1 && r == rPoints.size - 1) {
+                    if (d != null)
+                        lineA.start = d
                     l++
                     r++
                 } else {
-                    val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
-                    val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
-                    c = if (a.y < b.y) {
-                        l++
-                        next = lPoints[l]
-                        a
-                    } else {
+                    if (l == lPoints.size - 1 && r < rPoints.size - 1) {
+                        c = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
+                        /*val rIndex = right.findLineIndex(rPoints[r], rPoints[r + 1])
+                        right.lines[rIndex].start = c*/
+                        right.lines[0].start = c
+                        next = rPoints[r + 1]
                         r++
-                        next = rPoints[r]
-                        b
+                    } else if (l < lPoints.size - 1 && r == rPoints.size - 1) {
+                        c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
+                        println("left ${left.lines[0].toString()}")
+                        left.lines[0].end = c
+                        println("left ${left.lines[0].toString()}")
+                        next = lPoints[l + 1]
+                        l++
+                    } else {
+                        val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
+                        val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
+                        c = if (a.y < b.y) {
+                            l++
+                            left.lines[0].end = a
+                            next = lPoints[l]
+                            a
+                        } else {
+                            r++
+                            right.lines[0].start = b
+                            next = rPoints[r]
+                            b
+                        }
                     }
+                    if (last != null && d != null) {
+                        // if(lineA.isVertical())
+                        lineA.fix()
+                        lineA.start = d
+                        lineA.end = c
+                        println("${last.toString()} ${d.toString()} ")
+                        println("${next.toString()} ${c.toString()} ")
+                    } else {
+                        lineA.end = c
+                    }
+                    //lineA.cut(next, c)
                 }
-                lineA.cut(next, c)
+                lineA.color = Color.PURPLE
                 result.lines.add(lineA)
             } while (l < lPoints.size && r < rPoints.size)
             left.resetLineColor()
