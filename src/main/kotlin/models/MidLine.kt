@@ -1,16 +1,28 @@
 package voronoiDiagram.models
 
 import javafx.scene.paint.Color
+import javafx.scene.shape.Line
+import tornadofx.style
 import voronoiDiagram.libs.Utils
 
 enum class Position {
     TOP, BOTTOM, LEFT, RIGHT, IN_LINE
 }
 
-class MidLine(start: Point, end: Point, var a: Point, var b: Point) :
-    Line(start, end) {
+open class MidLine(var start: Point, var end: Point) {
+
+    var color: Color = Color.BLACK
     val originStart: Point
     val originEnd: Point
+
+    constructor (startX: Double, startY: Double, endX: Double, endY: Double) : this(
+        Point(startX, startY),
+        Point(endX, endY)
+    )
+
+    constructor (start: Point, end: Point, a: Point, b: Point) : this(
+        start, end
+    )
 
     init {
         if (isVertical()) {
@@ -26,17 +38,45 @@ class MidLine(start: Point, end: Point, var a: Point, var b: Point) :
         originEnd = Point(end.x, end.y)
     }
 
+    fun getFxLine(): Line {
+        val line = Line(start.x, start.y, end.x, end.y)
+        line.style {
+            stroke = Color.BLACK
+        }
+        return line
+    }
+
+    fun getConvexHullLine(): Line {
+        val line = Line(start.x, start.y, end.x, end.y)
+        line.style {
+            stroke = Color.GREEN
+        }
+        return line
+    }
+
+    fun getDivideLine(): Line {
+        val line = Line(start.x, start.y, end.x, end.y)
+        line.style {
+            stroke = Color.GOLD
+        }
+        return line
+    }
+
+    fun resetColor() {
+        color = Color.BLACK
+    }
+
     fun cut(next: Point, intersection: Point) {
         println("line ${toString()} next = ${next.toString()} ${isWhere(next)}")
         when (isWhere(next)) {
             Position.TOP ->
-                end = intersection
+                end = Point(intersection.x, intersection.y)
             Position.BOTTOM ->
-                start = intersection
+                start = Point(intersection.x, intersection.y)
             Position.LEFT ->
-                end = intersection
+                end = Point(intersection.x, intersection.y)
             Position.RIGHT ->
-                start = intersection
+                start = Point(intersection.x, intersection.y)
             else -> {
             }
         }
@@ -64,5 +104,12 @@ class MidLine(start: Point, end: Point, var a: Point, var b: Point) :
 
     fun isVertical(): Boolean {
         return Math.abs(Utils.getSlope(start, end)) >= 1
+    }
+
+    val out
+        get() = "E ${start.x.toInt()} ${start.y.toInt()} ${end.x.toInt()} ${end.y.toInt()}"
+
+    override fun toString(): String {
+        return "{(${start.x.toInt()}, ${start.y.toInt()})(${end.x.toInt()}, ${end.y.toInt()})} "
     }
 }

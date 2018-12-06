@@ -299,10 +299,10 @@ class HomePage : View() {
             vdList.clear()
             vdList.addAll(vdNextList)
             //println("vdNextList = ${sumVD(vdNextList)} ${vd.points.size}")
-            println("index = $rangeIndex")
+            /*println("index = $rangeIndex")
             vdList.forEachIndexed { index, voronoiDiagram ->
                 println("$index -> ${voronoiDiagram.points}")
-            }
+            }*/
         }
         if (vdList.size == 1) {
             outputData.text = OUTPUT_DATA
@@ -323,37 +323,36 @@ class HomePage : View() {
             result.forEachIndexed { index, _ ->
                 val line =
                     if (index != result.size - 1)
-                        Line(result[index], result[index + 1])
-                    else Line(result[0], result[index])
+                        MidLine(result[index], result[index + 1])
+                    else MidLine(result[0], result[index])
                 groups.add(line.getFxLine())
             }
             result.forEachIndexed { index, point ->
                 val line =
                     if (index != result.size - 1)
-                        Line(result[index], result[index + 1])
-                    else Line(result[0], result[index])
+                        MidLine(result[index], result[index + 1])
+                    else MidLine(result[0], result[index])
                 groups.add(line.getConvexHullLine())
             }
         }
         if (stepByStepEnabled) {
             vdList.forEachIndexed { index, voronoiDiagram ->
-                voronoiDiagram.lines.forEach { line ->
-                    groups.add(line.getFxLine())
-                }
+                println("voronoiDiagram.lines ${voronoiDiagram.lines.size}")
+               if(voronoiDiagram.lines.isNotEmpty()) groups.add(voronoiDiagram.lines.first().getFxLine())
                 val convexHull = voronoiDiagram.convexHull()
                 convexHull.forEachIndexed { i, _ ->
                     val line =
                         if (i != convexHull.size - 1)
-                            Line(convexHull[i], convexHull[i + 1])
-                        else Line(convexHull[0], convexHull[i])
+                            MidLine(convexHull[i], convexHull[i + 1])
+                        else MidLine(convexHull[0], convexHull[i])
                     groups.add(line.getConvexHullLine())
                 }
                 var range = 0
-                val lines: ArrayList<Line> = ArrayList()
+                val lines: ArrayList<MidLine> = ArrayList()
                 if (ranges.size - 1 != rangeIndex) {
                     while (range < 600) {
                         range += ranges[rangeIndex]
-                        val line = Line(
+                        val line = MidLine(
                             Point(range.toDouble(), PANEL_MIN),
                             Point(range.toDouble(), PANEL_MAX)
                         )
@@ -365,8 +364,12 @@ class HomePage : View() {
                         }
                     }
                 }
+                voronoiDiagram.lines.forEach { line ->
+                    println("lines ${line.start.toString()}")
+                    groups.add(line.getFxLine())
+                }
                 voronoiDiagram.points.forEach {
-                    println(it.color)
+                    //println(it.color)
                     groups.add(it.getCircle())
                     groups.add(it.getLabel())
                 }

@@ -3,7 +3,6 @@ package voronoiDiagram.libs
 import voronoiDiagram.models.*
 import java.io.File
 import java.util.*
-import java.util.Vector
 
 
 object Utils {
@@ -39,7 +38,7 @@ object Utils {
                         results.points.add(Point(textNumbers[1].toDouble(), textNumbers[2].toDouble()))
                     } else if (textNumbers.first() == "E") {
                         results.lines.add(
-                            Line(
+                            MidLine(
                                 textNumbers[1].toDouble(),
                                 textNumbers[2].toDouble(),
                                 textNumbers[3].toDouble(),
@@ -90,7 +89,7 @@ object Utils {
         return MidLine(Point(startX, startY), Point(endX, endY), pointA, pointB)
     }
 
-    fun findIntersection(lineA: Line, lineB: Line): Point {
+    fun findIntersection(lineA: MidLine, lineB: MidLine): Point {
         val a1 = lineA.end.y - lineA.start.y
         val b1 = lineA.start.x - lineA.end.x
         val c1 = a1 * lineA.start.x + b1 * lineA.start.y

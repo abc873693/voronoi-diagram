@@ -180,11 +180,11 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                 lineA.cut(next, c)
                 result.lines.add(lineA)
             } while (l < lPoints.size && r < rPoints.size)
-            println(result.lines.size)
             left.resetLineColor()
             right.resetLineColor()
             result.lines.addAll(left.lines)
             result.lines.addAll(right.lines)
+            println(result.lines.size)
             result.sortPoints()
             return result
         }
