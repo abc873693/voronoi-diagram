@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
 
 class MainApp : App(HomePage::class, Styles::class) {
     override fun start(stage: Stage) {
-        stage.isResizable = false
+        //stage.isResizable = false
         super.start(stage)
     }
 }
