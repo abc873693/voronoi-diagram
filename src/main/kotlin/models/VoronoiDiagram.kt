@@ -41,8 +41,8 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
 
     fun findLineIndex(a: Point, b: Point): Int {
         lines.forEachIndexed { index, midLine ->
-            if ((midLine.start.x == a.x && midLine.start.y == a.y) && (midLine.end.x == b.x && midLine.end.y == b.y) ||
-                (midLine.start.x == b.x && midLine.start.y == b.y) && (midLine.end.x == a.x && midLine.end.y == a.y)
+            if ((midLine.a.x == a.x && midLine.a.y == a.y) && (midLine.b.x == b.x && midLine.b.y == b.y) ||
+                (midLine.a.x == b.x && midLine.a.y == b.y) && (midLine.b.x == a.x && midLine.b.y == a.y)
             )
                 return index
         }
@@ -174,25 +174,27 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                 } else {
                     if (l == lPoints.size - 1 && r < rPoints.size - 1) {
                         c = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
-                        /*val rIndex = right.findLineIndex(rPoints[r], rPoints[r + 1])
-                        right.lines[rIndex].start = c*/
+                        val rIndex = right.findLineIndex(rPoints[r], rPoints[r + 1])
+                        //right.lines[rIndex].start = c
                         println("right = (${right.lines[0].a},${right.lines[0].b}) slope = ${right.lines[0].slope}")
+                        if(rIndex!=-1)
                         if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
-                            if (right.lines[0].isVertical())
-                                right.lines[0].end = c
+                            if (right.lines[rIndex].isVertical())
+                                right.lines[rIndex].end = c
                             else {
-                                right.lines[0].start = c
+                                right.lines[rIndex].start = c
                             }
                         next = rPoints[r + 1]
                         r++
                     } else if (l < lPoints.size - 1 && r == rPoints.size - 1) {
                         c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
-                        //println("left ${left.lines[0].toString()}")
+                        val lIndex = left.findLineIndex(lPoints[l], lPoints[l + 1])
+                        if(lIndex!=-1)
                         if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
-                            if (left.lines[0].isVertical())
-                                left.lines[0].start = c
+                            if (left.lines[lIndex].isVertical())
+                                left.lines[lIndex].start = c
                             else {
-                                left.lines[0].end = c
+                                left.lines[lIndex].end = c
                             }
                         //println("left ${left.lines[0].toString()}")
                         next = lPoints[l + 1]

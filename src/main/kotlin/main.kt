@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     launch(MainApp::class.java)
 }
 
-class MainApp : App(HomePage::class, Styles::class){
+class MainApp : App(HomePage::class, Styles::class) {
     override fun start(stage: Stage) {
         stage.isResizable = false
         super.start(stage)
@@ -279,8 +279,11 @@ class HomePage : View() {
         if (!stepByStepEnabled) {
             val list = points.sortedWith(compareBy({ it.x }, { it.y }))
             points.clear()
-            list.forEach { point ->
-                points.add(point)
+            list.forEachIndexed { index, point ->
+                if (index != 0) {
+                    if (!(list[index - 1].x == point.x && list[index - 1].y == point.y))
+                        points.add(point)
+                } else points.add(point)
             }
             vd = VoronoiDiagram(points)
             vdList.addAll(vd.divide())
@@ -384,9 +387,9 @@ class HomePage : View() {
                 }
             }
             if (vdList.size == 1) {
-                vdList.first().lines.forEach {
+                if (reset == 0) vdList.first().lines.forEach {
                     it.resetColor()
-                }
+                } else reset = 0
                 vdList.first().points.forEach {
                     it.resetColor()
                 }
@@ -399,6 +402,8 @@ class HomePage : View() {
         }
         updateInputData()
     }
+
+    var reset = 1
 
     private fun sumVD(list: ArrayList<VoronoiDiagram>): Int {
         var sum = 0
@@ -417,5 +422,6 @@ class HomePage : View() {
         outputData.text = OUTPUT_DATA
         convexHullEnabled = false
         stepByStepEnabled = false
+        reset = 1
     }
 }
