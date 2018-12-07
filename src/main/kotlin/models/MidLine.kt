@@ -15,6 +15,8 @@ open class MidLine(var start: Point, var end: Point) {
     val originStart: Point
     val originEnd: Point
     var isHP = true
+    val slope
+        get() = Utils.getSlope(start, end)
 
     constructor (startX: Double, startY: Double, endX: Double, endY: Double) : this(
         Point(startX, startY),
@@ -83,13 +85,13 @@ open class MidLine(var start: Point, var end: Point) {
         println("line ${toString()} next = ${next.toString()} ${isWhere(next)}")
         when (isWhere(next)) {
             Position.TOP ->
-                end = Point(intersection.x, intersection.y)
+                start = Point(intersection.x, intersection.y)
             Position.BOTTOM ->
-                start = Point(intersection.x, intersection.y)
-            Position.LEFT ->
                 end = Point(intersection.x, intersection.y)
-            Position.RIGHT ->
+            Position.LEFT ->
                 start = Point(intersection.x, intersection.y)
+            Position.RIGHT ->
+                end = Point(intersection.x, intersection.y)
             else -> {
             }
         }

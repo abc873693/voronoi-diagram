@@ -9,6 +9,7 @@ import javafx.scene.paint.Color
 import tornadofx.View
 import javafx.scene.text.FontWeight
 import javafx.stage.FileChooser
+import javafx.stage.Stage
 import tornadofx.*
 import voronoiDiagram.libs.Utils
 import voronoiDiagram.models.*
@@ -19,7 +20,12 @@ fun main(args: Array<String>) {
     launch(MainApp::class.java)
 }
 
-class MainApp : App(HomePage::class, Styles::class)
+class MainApp : App(HomePage::class, Styles::class){
+    override fun start(stage: Stage) {
+        stage.isResizable = false
+        super.start(stage)
+    }
+}
 
 class Styles : Stylesheet() {
     init {
@@ -69,6 +75,10 @@ class HomePage : View() {
 
     private fun generateForm(): HBox {
         return hbox(20) {
+            maxHeight = 600.0
+            minHeight = 600.0
+            minWidth = 1200.0
+            maxWidth = 1200.0
             stackpane {
                 groups = group {
                     rectangle {
