@@ -177,25 +177,25 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                         val rIndex = right.findLineIndex(rPoints[r], rPoints[r + 1])
                         //right.lines[rIndex].start = c
                         println("right = (${right.lines[0].a},${right.lines[0].b}) slope = ${right.lines[0].slope}")
-                        if(rIndex!=-1)
-                        if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
-                            if (right.lines[rIndex].isVertical())
-                                right.lines[rIndex].end = c
-                            else {
-                                right.lines[rIndex].start = c
-                            }
+                        if (rIndex != -1)
+                            if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
+                                if (right.lines[rIndex].isVertical())
+                                    right.lines[rIndex].end = c
+                                else {
+                                    right.lines[rIndex].start = c
+                                }
                         next = rPoints[r + 1]
                         r++
                     } else if (l < lPoints.size - 1 && r == rPoints.size - 1) {
                         c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
                         val lIndex = left.findLineIndex(lPoints[l], lPoints[l + 1])
-                        if(lIndex!=-1)
-                        if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
-                            if (left.lines[lIndex].isVertical())
-                                left.lines[lIndex].start = c
-                            else {
-                                left.lines[lIndex].end = c
-                            }
+                        if (lIndex != -1)
+                            if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
+                                if (left.lines[lIndex].isVertical())
+                                    left.lines[lIndex].start = c
+                                else {
+                                    left.lines[lIndex].end = c
+                                }
                         //println("left ${left.lines[0].toString()}")
                         next = lPoints[l + 1]
                         l++
@@ -261,11 +261,17 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                     }
                     //lineA.cut(next, c)
                 }
-                lineA.color = Color.PURPLE
+                lineA.color = Color.ORANGE
                 result.lines.add(lineA)
             } while (l < lPoints.size && r < rPoints.size)
             left.resetLineColor()
             right.resetLineColor()
+            left.lines.forEach {
+                it.color = Color.PURPLE
+            }
+            right.lines.forEach {
+                it.color = Color.YELLOWGREEN
+            }
             result.lines.addAll(left.lines)
             result.lines.addAll(right.lines)
             println(result.lines.size)
