@@ -3,6 +3,7 @@ package voronoiDiagram.models
 import javafx.scene.paint.Color
 import voronoiDiagram.libs.Utils
 import kotlin.collections.ArrayList
+import kotlin.math.ceil
 
 
 open class VoronoiDiagram(val points: ArrayList<Point>) {
@@ -156,7 +157,7 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                 val d = c
                 println("l  = $l r  = $r")
                 println("leftPoint = ${lPoints[l]} rightPoint = ${rPoints[r]}")
-                println("lineA  = ${lineA.toString()}")
+                println("lineA  = ${lineA.toString()} slope = ${lineA.slope}")
                 if (l == lPoints.size - 1 && r == rPoints.size - 1) {
                     if (d != null)
                         if (d.x in 0.0..600.0 && d.y in 0.0..600.0)
@@ -175,13 +176,24 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                         c = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
                         /*val rIndex = right.findLineIndex(rPoints[r], rPoints[r + 1])
                         right.lines[rIndex].start = c*/
-                        right.lines[0].start = c
+                        println("right = (${right.lines[0].a},${right.lines[0].b}) slope = ${right.lines[0].slope}")
+                        if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
+                            if (right.lines[0].isVertical())
+                                right.lines[0].end = c
+                            else {
+                                right.lines[0].start = c
+                            }
                         next = rPoints[r + 1]
                         r++
                     } else if (l < lPoints.size - 1 && r == rPoints.size - 1) {
                         c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
                         //println("left ${left.lines[0].toString()}")
-                        left.lines[0].end = c
+                        if (c.x in 0.0..600.0 && c.y in 0.0..600.0)
+                            if (left.lines[0].isVertical())
+                                left.lines[0].start = c
+                            else {
+                                left.lines[0].end = c
+                            }
                         //println("left ${left.lines[0].toString()}")
                         next = lPoints[l + 1]
                         l++
@@ -210,15 +222,16 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                             right.lines[0].start = c
                         }
                         if (result.lines.isNotEmpty())
-                            if(d!=null)
-                            if (result.lines.last().isVertical())
-                                result.lines.last().end = d
-                            else {
-                                if (result.lines.last().slope < 0)
-                                    result.lines.last().end = d
-                                else
-                                    result.lines.last().start = d
-                            }
+                            if (d != null)
+                                if (d.x in 0.0..600.0 && d.y in 0.0..600.0)
+                                    if (result.lines.last().isVertical())
+                                        result.lines.last().end = d
+                                    else {
+                                        if (result.lines.last().slope < 0)
+                                            result.lines.last().end = d
+                                        else
+                                            result.lines.last().start = d
+                                    }
                     }
                     if (c.x in 0.0..600.0 && c.y in 0.0..600.0) {
                         if (last == null && d == null) {

@@ -15,6 +15,8 @@ open class MidLine(var start: Point, var end: Point) {
     val originStart: Point
     val originEnd: Point
     var isHP = true
+    lateinit var a: Point
+    lateinit var b: Point
     val slope
         get() = Utils.getSlope(start, end)
 
@@ -25,7 +27,10 @@ open class MidLine(var start: Point, var end: Point) {
 
     constructor (start: Point, end: Point, a: Point, b: Point) : this(
         start, end
-    )
+    ) {
+        this.a = a
+        this.b = b
+    }
 
     init {
         if (isVertical()) {
