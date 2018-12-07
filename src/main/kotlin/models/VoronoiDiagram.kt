@@ -142,6 +142,8 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
             val rPoints = right.findIndex(result)
             var l = 0
             var r = 0
+            Utils.sortPointsByY(lPoints)
+            Utils.sortPointsByY(rPoints)
             println("left startIndex = ${left.startIndex} endIndex = ${left.endIndex}")
             println("right startIndex = ${right.startIndex} endIndex = ${right.endIndex}")
             println("${lPoints}")
@@ -157,7 +159,15 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                 println("lineA  = ${lineA.toString()}")
                 if (l == lPoints.size - 1 && r == rPoints.size - 1) {
                     if (d != null)
-                        lineA.start = d
+                        if (d.x in 0.0..600.0 && d.y in 0.0..600.0)
+                            if (lineA.isVertical())
+                                lineA.start = d
+                            else {
+                                if (lineA.slope < 0)
+                                    lineA.start = d
+                                else
+                                    lineA.end = d
+                            }
                     l++
                     r++
                 } else {
@@ -170,37 +180,69 @@ open class VoronoiDiagram(val points: ArrayList<Point>) {
                         r++
                     } else if (l < lPoints.size - 1 && r == rPoints.size - 1) {
                         c = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
-                        println("left ${left.lines[0].toString()}")
+                        //println("left ${left.lines[0].toString()}")
                         left.lines[0].end = c
-                        println("left ${left.lines[0].toString()}")
+                        //println("left ${left.lines[0].toString()}")
                         next = lPoints[l + 1]
                         l++
                     } else {
-                        val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
-                        val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
-                        c = if (a.y < b.y) {
+                        if (lPoints[l + 1].y <= rPoints[r + 1].y) {
+                            val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[l + 1]))
+                            val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[l + 1]))
                             l++
-                            left.lines[0].end = a
                             next = lPoints[l]
-                            a
+                            c = if (a.y < b.y) {
+                                a
+                            } else {
+                                b
+                            }
+                            left.lines[0].end = c
                         } else {
+                            val a = Utils.findIntersection(lineA, Utils.getMidLine(lPoints[l], lPoints[r + 1]))
+                            val b = Utils.findIntersection(lineA, Utils.getMidLine(rPoints[r], rPoints[r + 1]))
                             r++
-                            right.lines[0].start = b
                             next = rPoints[r]
-                            b
+                            c = if (a.y < b.y) {
+                                a
+                            } else {
+                                b
+                            }
+                            right.lines[0].start = c
                         }
+                        if (result.lines.isNotEmpty())
+                            if(d!=null)
+                            if (result.lines.last().isVertical())
+                                result.lines.last().end = d
+                            else {
+                                if (result.lines.last().slope < 0)
+                                    result.lines.last().end = d
+                                else
+                                    result.lines.last().start = d
+                            }
                     }
-                    if (last != null && d != null) {
-                        // if(lineA.isVertical())
-                        lineA.fix()
-                        //lineA.start = d
-                        lineA.cut(last,d)
-                        //lineA.end = c
-                        lineA.cut(next,c)
-                        println("${last.toString()} ${d.toString()} ")
-                        println("${next.toString()} ${c.toString()} ")
-                    } else {
-                        lineA.end = c
+                    if (c.x in 0.0..600.0 && c.y in 0.0..600.0) {
+                        if (last == null && d == null) {
+                            println("top ${lineA.toString()}")
+                            if (lineA.isVertical())
+                                lineA.end = c
+                            else {
+                                if (lineA.slope < 0)
+                                    lineA.end = c
+                                else
+                                    lineA.start = c
+                            }
+                            println("top ${lineA.toString()}")
+
+                        } else if (last != null && d != null) {
+                            // if(lineA.isVertical())
+                            lineA.fix()
+                            lineA.start = d
+                            //lineA.cut(last, d)
+                            //lineA.end = c
+                            lineA.end = c
+                            println("${last.toString()} ${d.toString()} ")
+                            println("${next.toString()} ${c.toString()} ")
+                        }
                     }
                     //lineA.cut(next, c)
                 }

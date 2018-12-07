@@ -100,17 +100,12 @@ object Utils {
         return Point((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta)
     }
 
-    fun sortPoints(points: ArrayList<Point>): ArrayList<Point> {
-        for (i in 0 until points.size - 1) {
-            for (j in (i + 1) until points.size) {
-                if (points[i].x > points[j].x || (points[i].x == points[j].x && (points[i].y > points[j].y))) {
-                    val tmp = points[i]
-                    points[i] = points[j]
-                    points[j] = tmp
-                }
-            }
+    fun sortPointsByY(points: ArrayList<Point>) {
+        val list = points.sortedWith(compareBy({ it.y }, { it.x }))
+        points.clear()
+        list.forEach { point ->
+            points.add(point)
         }
-        return points
     }
 
     fun getAngle(a: Point, b: Point, c: Point): Double {
